@@ -25,3 +25,13 @@
 .form-msg-hidden {
   display: none;
 }
+
+.navbar-expand .navbar-nav .dropdown-menu {
+  position: initial;
+  margin: 5px 15px;
+}
+
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .show > .nav-link {
+  color: white;
+}

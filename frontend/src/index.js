@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import "./styles/css/sb-admin-2.min.css";
+import "./styles/css/custom.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 
