@@ -1,14 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/board/Home";
-import Layout from "./pages/common/Layout";
+import { ContentLayout } from "./components/Layout/ContentLayout";
+import LoginForm from "./pages/user/LoginForm";
 
 function App() {
   return (
-    <div className="App">
+    <div className="App p-0">
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-        </Route>
+        <Route path="/login" element={<LoginForm />} />
+
+        <Route
+          path="/"
+          element={
+            <ContentLayout>
+              <Home />
+            </ContentLayout>
+          }
+        />
       </Routes>
     </div>
   );

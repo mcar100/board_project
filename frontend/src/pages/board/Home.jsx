@@ -1,7 +1,11 @@
 import { Container } from "react-bootstrap";
 
 function Home() {
-  return <Container fluid>hi home!</Container>;
+  return (
+    <Container fluid>
+      <div>hihi</div>
+    </Container>
+  );
 }
 
 export default Home;

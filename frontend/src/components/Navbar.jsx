@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
 
 function CustomNavbar() {
-  const username = "bot";
+  const username = null;
   return (
     <Navbar
       expand="lg"

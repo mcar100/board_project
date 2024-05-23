@@ -1,8 +1,8 @@
-import Footer from "./Footer";
-import CustomNavbar from "./Navbar";
-import Sidebar from "./SideBar";
+import Footer from "../Footer";
+import CustomNavbar from "../Navbar";
+import Sidebar from "../SideBar";
 
-function Layout({ children }) {
+export function ContentLayout({ children }) {
   return (
     <div id="wrapper">
       <Sidebar />
@@ -17,4 +17,4 @@ function Layout({ children }) {
   );
 }
 
-export default Layout;
+export default ContentLayout;
