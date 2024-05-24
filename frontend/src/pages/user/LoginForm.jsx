@@ -3,6 +3,7 @@ import { Form } from "react-bootstrap";
 import CardLayout from "../../components/Layout/CardLayout";
 import FormInput from "../../components/Form/FormInput";
 import FormCheckBox from "../../components/Form/FormCheckBox";
+import FormLink from "../../components/Form/FormLink";
 
 function LoginForm() {
   const [user, setUser] = useState({
@@ -43,20 +44,12 @@ function LoginForm() {
         <FormInput
           id="loginBtn"
           type="submit"
-          className="btn btn-primary btn-user btn block"
+          className="btn-primary btn-user btn-block h-100"
           value="로그인"
-          disabled
         />
-        <div class="text-center">
-          <a class="small" href="/membership">
-            Create an Account!
-          </a>
-        </div>
-        <div class="text-center">
-          <a class="small" href="/">
-            Home
-          </a>
-        </div>
+        <hr />
+        <FormLink text="Create an Account!" href="/membership" />
+        <FormLink text="Home" href="/" />
       </Form>
     </CardLayout>
   );

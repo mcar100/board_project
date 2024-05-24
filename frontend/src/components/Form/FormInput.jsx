@@ -21,7 +21,7 @@ function FormInput({
         type={type ? type : "text"}
         id={id}
         className={
-          className ? className + "form-control-user" : "form-control-user"
+          className ? `${className} form-control-user` : "form-control-user"
         }
         data-title={title}
         name={name}
