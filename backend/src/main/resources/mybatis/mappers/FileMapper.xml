@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.mapper.FileMapper">
+	<insert id="insertFileData" parameterType="com.example.demo.board.model.FileDTO">
+		INSERT 
+			INTO files (original_name, uploaded_name, board_id) 
+			VALUES (#{originalName}, #{uploadedName}, #{boardId}) 
+	</insert>
+	<select id="selectFileDataById" parameterType="java.lang.Integer" resultType="com.example.demo.board.model.FileDTO">
+		SELECT * FROM files 
+			WHERE id = #{fileId}
+	</select>
+	<select id="selectFileDataByBoardId" parameterType="java.lang.Integer" resultType="com.example.demo.board.model.FileDTO">
+		SELECT * FROM files
+			 WHERE board_id = #{boardId}
+	</select>
+	<delete id="deleteFileDataById" parameterType="java.lang.Integer">
+		DELETE FROM files
+			 WHERE id = #{fileId}
+	</delete>
+	<delete id="deleteFileDataByBoardId" parameterType="java.lang.Integer">
+		DELETE FROM files
+			 WHERE board_id = #{boardId}
+	</delete>
+</mapper>
