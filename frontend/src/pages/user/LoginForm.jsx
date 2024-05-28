@@ -1,57 +1,72 @@
-import { useState } from "react";
-import { Form } from "react-bootstrap";
-import CardLayout from "../../components/Layout/CardLayout";
-import FormInput from "../../components/Form/FormInput";
-import FormCheckBox from "../../components/Form/FormCheckBox";
-import FormLink from "../../components/Form/FormLink";
+import { useEffect, useRef } from "react";
+import * as Form from "../../components/Form";
+import { checkFormInfoBlank } from "../../utils/validator";
+import { convertFormToObject } from "../../utils/convertor";
+import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
+import callAxios from "../../services/axios";
 
 function LoginForm() {
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-    isCheck: false,
-  });
+  const formRef = useRef(null);
 
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+
+    try {
+      const [isCheck, checkMsg, invalidTarget] = checkFormInfoBlank(
+        formRef.current
+      );
+      if (!isCheck) {
+        throw new ValidatorAlert(checkMsg, invalidTarget);
+      }
+      const formData = convertFormToObject(formRef.current);
+      const response = await callAxios.post("/auth/login", formData);
+      if (response.status === 200) {
+        alert(response.data);
+        location.href = "/";
+      }
+    } catch (thrown) {
+      thrownHandler(thrown);
+    }
   };
 
   return (
-    <CardLayout>
-      <Form id="loginForm" className="user">
-        <FormInput
-          data-title="이메일"
-          type="email"
-          name="email"
-          onChange={handleChangeInput}
-          placeholder="Enter Email Address..."
-          aria-describedby="emailHelp"
-          value={user.email}
-        />
-        <FormInput
-          data-title="비밀번호"
-          type="password"
-          name="password"
-          autoComplete="current-password"
-          onChange={handleChangeInput}
-          placeholder="Enter Password..."
-        />
-        <FormCheckBox id="emailCheck" name="emailCheck" text="Remember Me" />
-        <FormInput
-          id="loginBtn"
-          type="submit"
-          className="btn-primary btn-user btn-block h-100"
-          value="로그인"
-        />
-        <hr />
-        <FormLink text="Create an Account!" href="/membership" />
-        <FormLink text="Home" href="/" />
-      </Form>
-    </CardLayout>
+    <Form.Frame
+      id="loginForm"
+      className="user"
+      onSubmit={handleSubmitForm}
+      formRef={formRef}
+    >
+      <Form.Input
+        data-title="이메일"
+        type="email"
+        name="email"
+        cookieId="email"
+        placeholder="Enter Email Address..."
+        aria-describedby="emailHelp"
+      />
+      <Form.Input
+        data-title="비밀번호"
+        type="password"
+        name="password"
+        placeholder="Enter Password..."
+        autoComplete="current-password"
+      />
+      <Form.CheckBox
+        id="emailCheck"
+        name="emailCheck"
+        text="Remember Me"
+        cookieId="email"
+      />
+      <Form.Button
+        id="loginBtn"
+        isSubmit
+        className="btn-primary btn-user btn-block h-100"
+        value="로그인"
+      />
+      <hr />
+      <Form.Link text="Create an Account!" href="/membership" />
+      <Form.Link text="Home" href="/" />
+    </Form.Frame>
   );
 }
 
