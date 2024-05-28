@@ -20,10 +20,11 @@ public class CookieHelper {
 		return isExist;
 	}
 	
-	public static Cookie create(String cookieName, String cookieValue, Integer cookieTimer) throws Exception{
+	public static Cookie create(String cookieName, String cookieValue, String cookiePath, Integer cookieTimer) throws Exception{
 		try {
 			String encodedValue = URLEncoder.encode(cookieValue, "UTF-8");
 			Cookie cookie = new Cookie(cookieName, encodedValue);
+			cookie.setPath(cookiePath);
 			cookie.setMaxAge(cookieTimer);
 			return cookie;
 		}
@@ -33,8 +34,9 @@ public class CookieHelper {
 
 	}
 	
-	public static void remove(HttpServletResponse response, String cookieName) {
+	public static void remove(HttpServletResponse response, String cookieName, String cookiePath) {
 		Cookie cookie = new Cookie(cookieName, null);
+		cookie.setPath(cookiePath);
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}

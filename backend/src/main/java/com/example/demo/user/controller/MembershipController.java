@@ -12,25 +12,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.user.model.InputFormat;
 import com.example.demo.user.model.User;
 import com.example.demo.user.service.MailService;
 import com.example.demo.user.service.UserService;
 
-@Controller
-@RequestMapping("/membership")
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
 public class MembershipController{
 	
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private MailService mailService;
-	
-    @GetMapping
-    public String goRegister() {
-        return "/account/membership"; 
-    }
 	
 	@PostMapping("/signup")
 	@ResponseBody
