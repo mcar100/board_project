@@ -26,6 +26,11 @@
   display: none;
 }
 
+.form-disabled {
+  cursor: default;
+  opacity: 0.8 !important;
+}
+
 .navbar-expand .navbar-nav .dropdown-menu {
   position: initial;
   margin: 5px 15px;
@@ -34,4 +39,9 @@
 .navbar-light .navbar-nav .nav-link.show,
 .navbar-light .navbar-nav .show > .nav-link {
   color: white;
+}
+
+.timer-position {
+  right: 30px;
+  bottom: 32px;
 }

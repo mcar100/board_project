@@ -50,7 +50,7 @@ function FormInput({
   );
 }
 
-function FormButton({ isSubmit, className, onClick, value }) {
+function FormButton({ isSubmit, className, onClick, value, ...otherProps }) {
   return (
     <Form.Group className="mb-3">
       <Form.Control
@@ -62,6 +62,7 @@ function FormButton({ isSubmit, className, onClick, value }) {
         }
         value={value}
         onClick={onClick}
+        {...otherProps}
       ></Form.Control>
     </Form.Group>
   );

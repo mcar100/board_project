@@ -4,24 +4,166 @@ import { useDaumPostcodePopup } from "react-daum-postcode";
 import * as Form from "../../../components/Form/Form";
 import { isNotBlank, validator } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
+import { convertSecondToTimerFormat } from "../../../utils/convertor";
+import callAxios from "../../../services/axios";
+import { AxiosError } from "axios";
 
 function EmailForm() {
-  const handleBtnClick = () => {};
+  const [email, setEmail] = useState("");
+  const [isVerify, setIsVerify] = useState(false);
+  const emailRef = useRef();
+
+  const handleBtnClick = async () => {
+    try {
+      const response = await callAxios.get("/users/duplication", {
+        params: {
+          type: emailRef.current.name,
+          value: emailRef.current.value,
+        },
+      });
+      if (response.status === 200) {
+        setEmail(emailRef.current.value);
+        alert("사용가능한 이메일입니다.");
+      }
+    } catch (thrown) {
+      setEmail("");
+      thrownHandler(thrown);
+    }
+  };
   return (
     <>
       <Row>
         <Col sm={9}>
           <Form.Input
+            inputRef={emailRef}
             data-title="이메일"
             name="email"
             placeholder="이메일주소"
+            className={isVerify && "form-clear"}
+            disabled={isVerify}
           />
         </Col>
         <Col sm={3}>
-          <Form.Button value="중복 확인" onClick={handleBtnClick} />
+          <Form.Button
+            value="중복 확인"
+            onClick={handleBtnClick}
+            className={isVerify && "form-disabled"}
+            disabled={isVerify}
+          />
+        </Col>
+      </Row>
+      {email && (
+        <EmailAuthForm
+          email={email}
+          isVerify={isVerify}
+          setIsVerify={setIsVerify}
+        />
+      )}
+    </>
+  );
+}
+
+function EmailAuthForm({ email, isVerify, setIsVerify }) {
+  const [isSend, setIsSend] = useState(false);
+  const emailAuthRef = useRef();
+  const handleSendAuthBtnClick = async () => {
+    try {
+      const response = await callAxios.post("/auth/email", { email: email });
+      if (response.status === 200) {
+        setIsSend(true);
+        alert(response.data);
+      }
+    } catch (thrown) {
+      setIsSend(false);
+      thrownHandler(thrown);
+    }
+  };
+  const handleCheckAuthBtnClick = async () => {
+    try {
+      const userNum = emailAuthRef.current.value;
+      const response = await callAxios.post("/auth/verification", {
+        userNum,
+      });
+      if (response.status === 200) {
+        setIsVerify(true);
+        alert(response.data);
+      }
+    } catch (thrown) {
+      if (thrown instanceof AxiosError && thrown.response.status === 404) {
+        setIsVerify(false);
+        setIsSend(false);
+      }
+      thrownHandler(thrown);
+    }
+  };
+  return (
+    <>
+      <Row>
+        <Col sm={6}>
+          <Form.Input
+            inputRef={emailAuthRef}
+            data-title="이메일 인증"
+            name="emailAuth"
+            placeholder="인증번호"
+            className={isVerify && "form-clear"}
+            disabled={isVerify}
+          />
+          {isSend && !isVerify && <Timer />}
+        </Col>
+        <Col sm={4}>
+          {!isSend ? (
+            <Form.Button
+              value="인증번호 전송"
+              onClick={handleSendAuthBtnClick}
+            />
+          ) : (
+            <Form.Button
+              value="이메일 인증"
+              onClick={handleCheckAuthBtnClick}
+              className={isVerify && "form-disabled"}
+              disabled={isVerify}
+            />
+          )}
         </Col>
       </Row>
     </>
+  );
+}
+
+function Timer() {
+  const [m, s] = convertSecondToTimerFormat(300); // 5분
+  const [minute, setMinute] = useState(m);
+  const [second, setSecond] = useState(s);
+  const timerRef = useRef();
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setSecond((prevSec) => {
+        if (prevSec > 0) {
+          return prevSec - 1;
+        } else {
+          setMinute((prevMin) => {
+            if (prevMin > 0) {
+              return prevMin - 1;
+            } else {
+              clearInterval(timerRef.current);
+              setSecond(0);
+              return 0;
+            }
+          });
+          return 59;
+        }
+      });
+    }, 1000);
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <span className="position-absolute small text-primary timer-position">
+      {`${minute}:${String(second).padStart(2, "0")}`}
+    </span>
   );
 }
 
