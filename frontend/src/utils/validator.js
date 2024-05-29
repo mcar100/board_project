@@ -31,8 +31,10 @@ const preventInputMap = {
   phone: /[^0-9]/gi,
 };
 
-function validator(type, value) {
-  const vm = validateMap[type];
+function validator(target) {
+  const { name, value } = target;
+  const title = target.dataset.title;
+  const vm = validateMap[name];
 
   if (!vm) {
     return;
@@ -44,9 +46,9 @@ function validator(type, value) {
   }
 
   if (regex.test(value)) {
-    return [true, getValidateMessage(type, "correct")];
+    return [true, getValidateMessage(title, "correct")];
   } else {
-    return [false, getValidateMessage(type, "error", vm.hint)];
+    return [false, getValidateMessage(title, "error", vm.hint)];
   }
 }
 

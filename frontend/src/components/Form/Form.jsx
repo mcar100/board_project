@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, CardLink } from "react-bootstrap";
-import CardLayout from "./Layout/CardLayout";
-import cookies from "react-cookies";
+import CardLayout from "../Layout/CardLayout";
 
-function FormFrame({ children, formRef, id, className, onSubmit }) {
+function FormFrame({ children, formRef, className, onSubmit, text, expand }) {
   return (
-    <CardLayout>
+    <CardLayout title={text} expand={expand ? true : false}>
       {" "}
-      <Form id={id} className={className} onSubmit={onSubmit} ref={formRef}>
+      <Form className={className} onSubmit={onSubmit} ref={formRef}>
         {children}
       </Form>
     </CardLayout>
@@ -15,28 +14,32 @@ function FormFrame({ children, formRef, id, className, onSubmit }) {
 }
 
 function FormInput({
+  inputRef,
   type,
-  id,
   className,
   title,
   name,
   placeholder,
-  cookieId,
+  defaultValue,
   ...otherProps
 }) {
-  const cookie = cookies.load(cookieId);
-  const [inputValue, setInputValue] = useState(cookie ? cookie : "");
+  const [inputValue, setInputValue] = useState("");
   const handleChangeInput = (e) => setInputValue(e.target.value);
+
+  useEffect(() => {
+    if (!defaultValue) return;
+    setInputValue(defaultValue);
+  }, []);
 
   return (
     <Form.Group className="mb-3">
       <Form.Control
+        ref={inputRef}
         type={type ? type : "text"}
-        id={id}
         className={
           className ? `${className} form-control-user` : "form-control-user"
         }
-        data-title={title}
+        title={title}
         name={name}
         placeholder={placeholder ? placeholder : "내용을 입력해주세요."}
         onChange={handleChangeInput}
@@ -47,12 +50,11 @@ function FormInput({
   );
 }
 
-function FormButton({ isSubmit, id, className, onClick, value }) {
+function FormButton({ isSubmit, className, onClick, value }) {
   return (
     <Form.Group className="mb-3">
       <Form.Control
         type={isSubmit ? "submit" : "button"}
-        id={id}
         className={
           className
             ? `${className} btn-primary btn-user btn-block h-100`
@@ -65,9 +67,8 @@ function FormButton({ isSubmit, id, className, onClick, value }) {
   );
 }
 
-function FormCheckBox({ id, name, className, text, cookieId }) {
-  const isCookie = cookies.load(cookieId) ? true : false;
-  const [isChecked, setIsChecked] = useState(isCookie);
+function FormCheckBox({ name, className, text, defaultValue }) {
+  const [isChecked, setIsChecked] = useState(defaultValue);
   const handleCheckBox = () => {
     setIsChecked(!isChecked);
   };
@@ -75,7 +76,7 @@ function FormCheckBox({ id, name, className, text, cookieId }) {
     <Form.Group className="mb-3">
       <div className="custom-control custom-checkbox small">
         <input
-          id={id}
+          id={name}
           name={name}
           type="checkbox"
           className={

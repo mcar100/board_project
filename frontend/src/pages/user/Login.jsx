@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
-import * as Form from "../../components/Form";
+import * as Form from "../../components/Form/Form";
+import * as UserForm from "../../components/Form/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { convertFormToObject } from "../../utils/convertor";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import callAxios from "../../services/axios";
 
-function LoginForm() {
+function Login() {
   const formRef = useRef(null);
 
   const handleSubmitForm = async (e) => {
@@ -31,12 +32,12 @@ function LoginForm() {
 
   return (
     <Form.Frame
-      id="loginForm"
       className="user"
       onSubmit={handleSubmitForm}
       formRef={formRef}
+      text="Welcome Back!"
     >
-      <Form.Input
+      <UserForm.Input
         data-title="이메일"
         type="email"
         name="email"
@@ -51,18 +52,12 @@ function LoginForm() {
         placeholder="Enter Password..."
         autoComplete="current-password"
       />
-      <Form.CheckBox
-        id="emailCheck"
+      <UserForm.CheckBox
         name="emailCheck"
         text="Remember Me"
         cookieId="email"
       />
-      <Form.Button
-        id="loginBtn"
-        isSubmit
-        className="btn-primary btn-user btn-block h-100"
-        value="로그인"
-      />
+      <Form.Button isSubmit value="로그인" />
       <hr />
       <Form.Link text="Create an Account!" href="/membership" />
       <Form.Link text="Home" href="/" />
@@ -70,4 +65,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default Login;
