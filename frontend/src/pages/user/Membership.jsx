@@ -15,23 +15,10 @@ function Membership() {
       formRef={formRef}
       text="회원가입"
     >
-      <Form.Input
-        name="name"
-        placeholder="이름"
-        data-title="이름"
-        title="한글+특수문자 불가, 10자 이하"
-        maxLength="10"
-      />
+      <UserForm.NameForm />
       <UserForm.EmailForm />
       <UserForm.PasswordForm />
-      <Form.Input
-        type="tel"
-        name="phone"
-        data-title="휴대폰번호"
-        placeholder="휴대폰번호"
-        maxLength="13"
-        pattern="[0-9]{2,3}-[0,9]{3,4}-[0-9]{4}"
-      />
+      <UserForm.PhoneForm />
       <UserForm.AddressForm />
       <Form.Button isSubmit value="Register Account" />
       <hr />

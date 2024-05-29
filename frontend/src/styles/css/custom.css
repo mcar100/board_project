@@ -10,7 +10,6 @@
   display: inline-block;
   box-sizing: content-box;
   font-size: 80%;
-  padding-top: 0.5rem;
   padding-left: 0.8rem;
 }
 
@@ -44,4 +43,12 @@
 .timer-position {
   right: 30px;
   bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group > div {
+  margin-bottom: 0px !important;
 }

@@ -4,7 +4,7 @@
 // } from "./constants";
 const validateMap = {
   name: {
-    regex: /^[a-zA-Z0-9]{1,10}$/,
+    regex: /^(?=.*[a-zA-Z])(?=.*[0-9]){1,10}.+$/,
     hint: "(영어+숫자 조합, 10자리 이하)",
   },
   email: {
@@ -31,6 +31,13 @@ const preventInputMap = {
   phone: /[^0-9]/gi,
 };
 
+const replaceInputMap = {
+  phone: {
+    in: /([0-9]{2,3})([0-9]{3,4})([0-9]{4})/g,
+    out: "$1-$2-$3",
+  },
+};
+
 function validator(target) {
   const { name, value } = target;
   const title = target.dataset.title;
@@ -52,11 +59,16 @@ function validator(target) {
   }
 }
 
-function preventInputs(target, type, value) {
+function preventInputs(type, value) {
   const regex = preventInputMap[type];
-  if (regex.test(value)) {
-    // $(target).val(value.replace(regex, ""));
-  }
+  if (!regex) return value;
+  return value.replace(regex, "");
+}
+
+function replaceInputs(type, value) {
+  const regex = replaceInputMap[type];
+  if (!regex) return value;
+  return value.replace(regex.in, regex.out);
 }
 
 function checkFormInfo(formInfo) {
@@ -115,6 +127,7 @@ export {
   validateMap,
   validator,
   preventInputs,
+  replaceInputs,
   checkFormInfo,
   checkFormInfoBlank,
   isNotBlank,

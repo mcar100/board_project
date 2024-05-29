@@ -2,11 +2,66 @@ import { useEffect, useState, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import * as Form from "../../../components/Form/Form";
-import { isNotBlank, validator } from "../../../utils/validator";
+import { isNotBlank, replaceInputs, validator } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
 import { convertSecondToTimerFormat } from "../../../utils/convertor";
 import callAxios from "../../../services/axios";
 import { AxiosError } from "axios";
+
+function NameForm() {
+  const [isCheck, setIsCheck] = useState();
+  const [spanMsg, setSpanMsg] = useState("");
+  const nameRef = useRef(null);
+  const handleBlur = async () => {
+    try {
+      const { name, value } = nameRef.current;
+      const [isValid, validateMsg] = validator(nameRef.current);
+
+      if (!isValid) {
+        throw new Error(validateMsg);
+      }
+
+      const response = await callAxios.get("/users/duplication", {
+        params: { type: name, value },
+      });
+
+      if (response.status === 200) {
+        setIsCheck(true);
+        setSpanMsg(response.data);
+      }
+    } catch (thrown) {
+      setIsCheck(false);
+      if (thrown instanceof AxiosError) {
+        setSpanMsg(thrown.response.data);
+      } else if (thrown instanceof Error) {
+        setSpanMsg(thrown.message);
+      }
+      nameRef.current.focus();
+    }
+  };
+
+  return (
+    <>
+      <Form.Group className="form-group">
+        <Form.Input
+          inputRef={nameRef}
+          name="name"
+          className={isCheck && "form-clear"}
+          placeholder="이름"
+          title="한글+특수문자 불가, 10자 이하"
+          data-title="이름"
+          maxLength="10"
+          onBlur={handleBlur}
+        />
+        {spanMsg && (
+          <Form.Text className={isCheck ? "form-msg-clear" : "form-msg-error"}>
+            {spanMsg}
+          </Form.Text>
+        )}
+      </Form.Group>
+    </>
+  );
+}
 
 function EmailForm() {
   const [email, setEmail] = useState("");
@@ -15,6 +70,11 @@ function EmailForm() {
 
   const handleBtnClick = async () => {
     try {
+      const [isValid, validateMsg] = validator(emailRef.current);
+      if (!isValid) {
+        throw new Error(validateMsg);
+      }
+
       const response = await callAxios.get("/users/duplication", {
         params: {
           type: emailRef.current.name,
@@ -36,10 +96,10 @@ function EmailForm() {
         <Col sm={9}>
           <Form.Input
             inputRef={emailRef}
-            data-title="이메일"
             name="email"
             placeholder="이메일주소"
             className={isVerify && "form-clear"}
+            data-title="이메일"
             disabled={isVerify}
           />
         </Col>
@@ -102,10 +162,10 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
         <Col sm={6}>
           <Form.Input
             inputRef={emailAuthRef}
-            data-title="이메일 인증"
             name="emailAuth"
             placeholder="인증번호"
             className={isVerify && "form-clear"}
+            data-title="이메일 인증"
             disabled={isVerify}
           />
           {isSend && !isVerify && <Timer />}
@@ -243,9 +303,9 @@ function PasswordForm() {
             type="password"
             name="password"
             className={isPasswordCheck && "form-clear"}
-            data-title="비밀번호"
             placeholder="비밀번호"
             title="영어+특수문자만 입력가능, 8~15자"
+            data-title="비밀번호"
             maxLength="15"
             onBlur={handleBlur}
           />
@@ -264,6 +324,33 @@ function PasswordForm() {
         </Col>
       </Row>
     </>
+  );
+}
+
+function PhoneForm() {
+  const [isCheck, setIsCheck] = useState(false);
+  const phoneRef = useRef(null);
+  const handleBlur = () => {
+    const [isValid, validateMsg] = validator(phoneRef.current);
+    if (!isValid) {
+      setIsCheck(false);
+    } else {
+      setIsCheck(true);
+    }
+    alert(validateMsg);
+  };
+  return (
+    <Form.Input
+      inputRef={phoneRef}
+      type="tel"
+      name="phone"
+      className={isCheck && "form-clear"}
+      data-title="휴대폰번호"
+      placeholder="휴대폰번호"
+      maxLength="13"
+      pattern="[0-9]{2,3}-[0,9]{3,4}-[0-9]{4}"
+      onBlur={handleBlur}
+    />
   );
 }
 
@@ -308,6 +395,7 @@ function AddressForm() {
         <Col sm={9}>
           <Form.Input
             name="address1"
+            className={addressForm.address && "form-clear"}
             data-title="주소"
             placeholder="주소"
             defaultValue={addressForm.address}
@@ -328,6 +416,7 @@ function AddressForm() {
           {" "}
           <Form.Input
             name="zipCode"
+            className={addressForm.zipCode && "form-clear"}
             data-title="우편번호"
             placeholder="우편번호"
             defaultValue={addressForm.zipCode}
@@ -338,6 +427,7 @@ function AddressForm() {
           {" "}
           <Form.Input
             name="details"
+            className={addressForm.details && "form-clear"}
             data-title="참고사항"
             placeholder="참고사항"
             defaultValue={addressForm.details}
@@ -349,4 +439,4 @@ function AddressForm() {
   );
 }
 
-export { EmailForm, PasswordForm, AddressForm };
+export { NameForm, EmailForm, PasswordForm, PhoneForm, AddressForm };
