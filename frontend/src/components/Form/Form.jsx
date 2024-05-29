@@ -29,7 +29,7 @@ function FormInput({
   useEffect(() => {
     if (!defaultValue) return;
     setInputValue(defaultValue);
-  }, []);
+  }, [defaultValue]);
 
   return (
     <Form.Group className="mb-3">
