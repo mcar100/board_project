@@ -2,9 +2,12 @@ package com.example.demo.user.controller;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,14 +53,14 @@ public class MembershipController{
     	}
     }
 
-	@GetMapping("/user")
-	@ResponseBody
-    public boolean checkNameDuplicate(@RequestParam Map<String, Object> map) throws Exception {
+	@GetMapping("/users/duplication")
+    public ResponseEntity<String> checkInfoDuplicate(@RequestParam Map<String, Object> map, HttpServletRequest request) throws Exception {
 		try {
+			log.info(request.getRequestURI()+"");
 			if(map==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
-			
+			log.info(map.get("type") +" " +map.get("value"));
 			InputFormat inputFormat = new InputFormat();
 			inputFormat.setType((String) map.get("type"));
 			inputFormat.setValue((String) map.get("value"));
@@ -65,62 +68,64 @@ public class MembershipController{
     		if(check) {
     			throw new Exception("중복된 정보가 존재합니다.");
     		}
-    		return false;
+    		return ResponseEntity.ok().body("사용 가능한 정보입니다.");
     	}
     	catch(Exception e) {
-    		System.out.println(e.getMessage());
-    		return true;
+    		log.error(e.getMessage()+"");
+    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     	}
     }
 	
-	@PostMapping("/send")
-	@ResponseBody
-	public boolean sendEmailVerification(@RequestBody User user, HttpSession session) throws Exception {
+	@PostMapping("/auth/email")
+	public ResponseEntity<String> sendEmailVerification(@RequestBody User user, HttpSession session, HttpServletRequest request) throws Exception {
+		log.info(request.getRequestURI()+"");
 		try {
 			if(user==null||user.getEmail()==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
-			
 			String authNum = mailService.sendEmail(user.getEmail());
-			System.out.println(authNum);
+			log.info("send authcode("+ authNum+") to "+user.getEmail());
 			if(authNum==null) {
 				throw new Exception("이메일 전송 실패");
 			}
 			session.setAttribute("emailAuthNum", authNum);
-			session.setMaxInactiveInterval(60*5); // 5분 동안 유효
-			return true;
+			session.setMaxInactiveInterval(300); // 5분 동안 유효
+			return ResponseEntity.ok().body("인증번호가 전송되었습니다.");
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
+			log.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증번호 전송에 실패했습니다.");
 		}
 
 	}
 	
-	@PostMapping("/verify")
+	@PostMapping("/auth/verification")
 	@ResponseBody
-	public boolean verifyEmail(@RequestBody Map<String, Object> map, HttpSession session) throws Exception {
+	public ResponseEntity<String> verifyEmail(@RequestBody Map<String, Object> map, HttpSession session, HttpServletRequest request) throws Exception {
+		log.info(request.getRequestURI()+"");
 		try {
-			String userNum = (String)map.get("userNum");
-			if(userNum==null) {
-				throw new Exception("잘못된 요청입니다.");
-			}
 			
 			String authNum = (String)session.getAttribute("emailAuthNum");
 			if(authNum==null) {
-				throw new Exception("인증코드가 만료되었습니다.");
+				log.error("인증코드 만료됨");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("인증코드가 만료되었습니다. 다시 인증을 진행해주세요.");
+			}
+			
+			String userNum = (String)map.get("userNum");
+			if(userNum==null||userNum.length()==0) {
+				throw new Exception("인증 코드를 입력해주세요.");
 			}
 			
 			boolean verify = mailService.checkEmailVerification(authNum, userNum);
 			if(!verify) {
 				throw new Exception("잘못된 번호입니다. 올바른 인증코드를 입력해주세요.");
 			}
-			System.out.println("인증되었습니다.");
-			return true;
+			log.info("인증 완료");
+			return ResponseEntity.ok().body("인증되었습니다.");
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
+			log.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 
 	}

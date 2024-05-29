@@ -94,7 +94,7 @@ function handleOnInput(){
 	const [name, value] = [$(this).attr("name"), $(this).val()];
 	preventInputs(this, name, value)
 	if(name==='phone'){
-		const phoneRegex = validateMap[name].replaceRegex;
+		const phoneRegex ㅊ= validateMap[name].replaceRegex;
 		$(this).val($(this).val().replace(phoneRegex,"$1-$2-$3"));
 	}
 }

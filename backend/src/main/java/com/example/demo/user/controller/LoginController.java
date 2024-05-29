@@ -38,7 +38,7 @@ public class LoginController {
     		log.info(request.getRequestURI()+"");
     		
     		if(loginFormat==null) {
-    			throw new Exception("요청된 값이 없습니다.");
+    			throw new Exception("요청된 정보가 없습니다.");
     		}
 //    		RecaptchaConfig.setSecretKey(secretKey);
 //    		
