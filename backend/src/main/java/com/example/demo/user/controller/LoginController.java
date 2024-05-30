@@ -92,5 +92,22 @@ public class LoginController {
     	return ResponseEntity.ok().body("로그아웃되었습니다.");
     }
     
-
+    @GetMapping("/user/profile")
+    public ResponseEntity<Object> getUserInfo(HttpServletRequest request, HttpServletResponse response){
+    	try {
+    		log.info(request.getRequestURI()+"");
+			HttpSession session = request.getSession(false);
+			Integer userId = (Integer)session.getAttribute("userId");
+			if(userId==null) {
+				throw new Exception("Session이 없습니다.");
+			}
+			User userData = userService.getUserById(userId);
+			
+	    	return ResponseEntity.ok().body(userData.getName());
+		}
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+	    	return ResponseEntity.ok().body(null);
+		}    	
+    }
 }
