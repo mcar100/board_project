@@ -12,12 +12,12 @@ const validateMap = {
     hint: "(영어+숫자+특수문자(._@) 조합)",
   },
   password: {
-    regex: /^[^0-9]{8,15}$/,
-    hint: "(문자+특수문자 조합, 8~15자리)",
+    regex: /^[a-zA-Z!@#$%^&*()_+=-]{8,15}$/,
+    //  regex: /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+=-])[a-zA-Z!@#$%^&*()_+=-]{8,15}$/,
+    hint: "(영어+특수문자 조합, 8~15자리)",
   },
   phone: {
     regex: /(^01[0-9])-([0-9]{3,4})-([0-9]{4})$/,
-    replaceRegex: /([0-9]{2,3})([0-9]{3,4})([0-9]{4})/g,
     hint: "(01x-xxxx-xxxx)",
   },
   passwordCheck: {
@@ -28,6 +28,7 @@ const validateMap = {
 const preventInputMap = {
   name: /[^a-zA-Z0-9]/gi,
   email: /[^a-zA-Z_.@0-9]/gi,
+  password: /[0-9ㄱ-힣]/g,
   phone: /[^0-9]/gi,
 };
 

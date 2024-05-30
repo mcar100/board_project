@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import * as Form from "../../../components/Form/Form";
-import { isNotBlank, replaceInputs, validator } from "../../../utils/validator";
+import { isNotBlank, validator } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
 import { convertSecondToTimerFormat } from "../../../utils/convertor";
 import callAxios from "../../../services/axios";
@@ -228,25 +228,28 @@ function Timer() {
 }
 
 function PasswordForm() {
+  const [isCheck, setIsCheck] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     password: "",
     passwordCheck: "",
   });
 
-  const currentFocus = useRef(null);
   const passwordRef = useRef(null);
-  const passwordCheckRef = useRef(null);
 
   const handleBlur = (e) => {
     if (!isNotBlank(e.target.value)) {
+      console.log("blank로 이벤트 스킵");
       return;
     }
-    if (currentFocus.current != null && e.target !== currentFocus.current) {
-      currentFocus.current = null;
+    if (passwordForm[e.target.name] === e.target.value) {
+      console.log("일치로 이벤트 스킵");
       return;
     }
-    currentFocus.current = e.target;
     try {
+      setPasswordForm((prev) => ({
+        ...prev,
+        [e.target.name]: e.target.value,
+      }));
       if (e.target.name === "password") {
         checkPassword(e.target);
       } else if (e.target.name === "passwordCheck") {
@@ -259,23 +262,18 @@ function PasswordForm() {
 
   const checkPassword = (target) => {
     const [isValid, validateMsg] = validator(target);
+
     if (!isValid) {
-      setPasswordForm((prev) => ({
-        ...prev,
-        password: "",
-      }));
-      throw new ValidatorAlert(validateMsg, passwordRef.current);
+      setIsCheck(false);
+      throw new ValidatorAlert(validateMsg, target);
     } else {
-      setPasswordForm((prev) => ({
-        ...prev,
-        password: target.value,
-      }));
+      setIsCheck(true);
       throw new ValidatorAlert(validateMsg);
     }
   };
 
   const checkPasswordConfirm = (target) => {
-    if (!isNotBlank(passwordForm.password)) {
+    if (!isCheck) {
       throw new ValidatorAlert(
         "먼저 사용 가능한 비밀번호를 입력하세요.",
         passwordRef.current
@@ -283,13 +281,21 @@ function PasswordForm() {
     }
 
     if (passwordForm.password === target.value) {
-      setPasswordForm((prev) => ({ ...prev, passwordCheck: target.value }));
       throw new ValidatorAlert("비밀번호가 일치합니다.");
     } else {
-      setPasswordForm((prev) => ({ ...prev, passwordCheck: "" }));
-      throw new ValidatorAlert("비밀번호가 일치하지 않습니다.");
+      throw new ValidatorAlert("비밀번호가 일치하지 않습니다.", target);
     }
   };
+
+  useEffect(() => {
+    if (isCheck && passwordForm.password === passwordForm.passwordCheck) {
+      setPasswordForm((prev) => ({
+        ...prev,
+        ["passwordCheck"]: "",
+      }));
+    }
+  }, [isCheck]);
+
   const isPasswordCheck =
     passwordForm.password &&
     passwordForm.password === passwordForm.passwordCheck;
@@ -313,12 +319,12 @@ function PasswordForm() {
         <Col>
           {" "}
           <Form.Input
-            inputRef={passwordCheckRef}
             type="password"
             name="passwordCheck"
             className={isPasswordCheck && "form-clear"}
             data-title="비밀번호 확인"
             placeholder="비밀번호 확인"
+            defaultValue={""}
             onBlur={handleBlur}
           />
         </Col>
@@ -331,6 +337,10 @@ function PhoneForm() {
   const [isCheck, setIsCheck] = useState(false);
   const phoneRef = useRef(null);
   const handleBlur = () => {
+    if (!isNotBlank(phoneRef.current.value)) {
+      return;
+    }
+
     const [isValid, validateMsg] = validator(phoneRef.current);
     if (!isValid) {
       setIsCheck(false);

@@ -16,19 +16,19 @@ function getPathNameNumber() {
   return window.location.pathname.split("/").pop();
 }
 
-function convertApiDataFormat(
-  pathVar = null,
-  requestParams = null,
-  data = null,
-  type = "json"
-) {
-  return {
-    pathVar: pathVar,
-    requestParams: requestParams,
-    data: data,
-    formatType: type,
-  };
-}
+// function convertApiDataFormat(
+//   pathVar = null,
+//   requestParams = null,
+//   data = null,
+//   type = "json"
+// ) {
+//   return {
+//     pathVar: pathVar,
+//     requestParams: requestParams,
+//     data: data,
+//     formatType: type,
+//   };
+// }
 
 function convertSecondToTimerFormat(timer) {
   if (timer < 60) {
@@ -52,7 +52,7 @@ export {
   convertFormToObject,
   convertStringToBytes,
   getPathNameNumber,
-  convertApiDataFormat,
+  //  convertApiDataFormat,
   changeObjectKeyName,
   convertSecondToTimerFormat,
 };
