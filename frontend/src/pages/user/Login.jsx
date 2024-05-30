@@ -1,13 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/Form/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
-import { convertFormToObject } from "../../utils/convertor";
+import {
+  convertFormToObject,
+  changeObjectKeyName,
+} from "../../utils/convertor";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import callAxios from "../../services/axios";
 
 function Login() {
   const formRef = useRef(null);
+  const [isVerify, setIsVerify] = useState(false);
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -20,6 +24,8 @@ function Login() {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
       const formData = convertFormToObject(formRef.current);
+      changeObjectKeyName(formData, "g-recaptcha-response", "recaptcha");
+
       const response = await callAxios.post("/auth/login", formData);
       if (response.status === 200) {
         alert(response.data);
@@ -57,7 +63,13 @@ function Login() {
         text="Remember Me"
         cookieId="email"
       />
-      <Form.Button isSubmit value="로그인" />
+      <UserForm.Recaptcha setIsVerify={setIsVerify} />
+      <Form.Button
+        isSubmit
+        value="로그인"
+        className={!isVerify && "form-disabled"}
+        disabled={!isVerify && "disabled"}
+      />
       <hr />
       <Form.Link text="Create an Account!" href="/membership" />
       <Form.Link text="Home" href="/" />

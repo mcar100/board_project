@@ -1,5 +1,7 @@
+import { useState } from "react";
 import * as Form from "../../../components/Form/Form";
 import cookies from "react-cookies";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function CookieFormInput({
   type,
@@ -34,4 +36,28 @@ function CookieFormCheckBox({ name, className, text, cookieId }) {
   );
 }
 
-export { CookieFormInput as Input, CookieFormCheckBox as CheckBox };
+function RecaptchaForm({ setIsVerify }) {
+  const siteKey = "6Lf3CtopAAAAAGgqtQkIPw6l2pY16WmfgpgenWtb";
+  const handleChange = () => {
+    setIsVerify(true);
+  };
+  const handleExpired = () => {
+    setIsVerify(false);
+  };
+
+  return (
+    <Form.Group className="form-group flex justify-content-center">
+      <ReCAPTCHA
+        sitekey={siteKey}
+        onChange={handleChange}
+        onExpired={handleExpired}
+      />
+    </Form.Group>
+  );
+}
+
+export {
+  CookieFormInput as Input,
+  CookieFormCheckBox as CheckBox,
+  RecaptchaForm as Recaptcha,
+};
