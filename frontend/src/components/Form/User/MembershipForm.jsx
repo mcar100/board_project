@@ -2,9 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import * as Form from "../../../components/Form/Form";
+import Timer from "../../Common/Timer";
 import { isNotBlank, validator } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
-import { convertSecondToTimerFormat } from "../../../utils/convertor";
 import { AxiosError } from "axios";
 import {
   checkDuplicate,
@@ -189,43 +189,6 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
         </Col>
       </Row>
     </>
-  );
-}
-
-function Timer() {
-  const [m, s] = convertSecondToTimerFormat(300); // 5분
-  const [minute, setMinute] = useState(m);
-  const [second, setSecond] = useState(s);
-  const timerRef = useRef();
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setSecond((prevSec) => {
-        if (prevSec > 0) {
-          return prevSec - 1;
-        } else {
-          setMinute((prevMin) => {
-            if (prevMin > 0) {
-              return prevMin - 1;
-            } else {
-              clearInterval(timerRef.current);
-              setSecond(0);
-              return 0;
-            }
-          });
-          return 59;
-        }
-      });
-    }, 1000);
-    return () => {
-      clearInterval(timerRef.current);
-    };
-  }, []);
-
-  return (
-    <span className="position-absolute small text-primary timer-position">
-      {`${minute}:${String(second).padStart(2, "0")}`}
-    </span>
   );
 }
 

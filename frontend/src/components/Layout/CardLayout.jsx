@@ -14,7 +14,9 @@ function CardLayout({ children, title, expand }) {
                 <Row>
                   <Col
                     lg={imageSize}
-                    className="d-none d-lg-block bg-login-image"
+                    className={`d-none d-lg-block ${
+                      expand ? "bg-register-image" : "bg-login-image"
+                    }`}
                   ></Col>
                   <Col lg={contentSize}>
                     <div className="p-5">
