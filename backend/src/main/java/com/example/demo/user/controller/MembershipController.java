@@ -33,23 +33,23 @@ public class MembershipController{
 	@Autowired
 	private MailService mailService;
 	
-	@PostMapping("/signup")
-	@ResponseBody
-    public boolean signUp(@RequestBody User user) throws Exception {
+	@PostMapping("/users")
+    public ResponseEntity<String> signUp(@RequestBody User user,HttpServletRequest request) throws Exception {
+		log.info(request.getRequestURI()+"");
 		try {
 			if(user==null) {
-				throw new Exception("요청된 정보가 없습니다.");
+				throw new Exception("요청된 정보가 올바르지 않습니다.");
 			}
 			
     		boolean result = userService.insertUserInfo(user);
     		if(!result) {
-    			throw new Exception("User Service 에러");
+    			throw new Exception("회원가입에 실패했습니다.");
     		}
-    		return true;
+    		return ResponseEntity.ok().body("가입되었습니다.");
     	}
     	catch(Exception e) {
-    		System.out.println(e.getMessage());
-    		return false;
+    		log.error(e.getMessage());
+    		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     	}
     }
 
@@ -58,7 +58,7 @@ public class MembershipController{
 		try {
 			log.info(request.getRequestURI()+"");
 			if(map==null) {
-				throw new Exception("요청된 정보가 없습니다.");
+				throw new Exception("요청된 정보가 올바르지 않습니다.");
 			}
 			log.info(map.get("type") +" " +map.get("value"));
 			InputFormat inputFormat = new InputFormat();
@@ -81,7 +81,7 @@ public class MembershipController{
 		log.info(request.getRequestURI()+"");
 		try {
 			if(user==null||user.getEmail()==null) {
-				throw new Exception("요청된 정보가 없습니다.");
+				throw new Exception("요청된 정보가 올바르지 않습니다.");
 			}
 			String authNum = mailService.sendEmail(user.getEmail());
 			log.info("send authcode("+ authNum+") to "+user.getEmail());
@@ -104,7 +104,6 @@ public class MembershipController{
 	public ResponseEntity<String> verifyEmail(@RequestBody Map<String, Object> map, HttpSession session, HttpServletRequest request) throws Exception {
 		log.info(request.getRequestURI()+"");
 		try {
-			
 			String authNum = (String)session.getAttribute("emailAuthNum");
 			if(authNum==null) {
 				log.error("인증코드 만료됨");

@@ -40,11 +40,6 @@ public class LoginController {
     		if(loginFormat==null) {
     			throw new Exception("요청된 정보가 없습니다.");
     		}
-//    		RecaptchaConfig.setSecretKey(secretKey);
-//    		
-//    		if(!RecaptchaConfig.verify(loginFormat.getRecaptcha())) {
-//    			throw new Exception("Recaptcha 에러");
-//    		}
     		
     		log.info(loginFormat.getEmail() +" " +loginFormat.getPassword()+" "+loginFormat.getEmailCheck() +"");
 			User user = userService.getUserByEmailAndPassword(loginFormat.getEmail(), loginFormat.getPassword());
@@ -52,6 +47,11 @@ public class LoginController {
     			throw new Exception("이메일 혹은 비밀번호가 틀렸습니다.");
     		}
     		
+    		RecaptchaConfig.setSecretKey(secretKey);
+    		
+    		if(!RecaptchaConfig.verify(loginFormat.getRecaptcha())) {
+    			throw new Exception("Recaptcha 에러");
+    		}
     		// session
     		if(request.getSession()!=null) {
     			request.getSession(false).invalidate();
@@ -80,7 +80,7 @@ public class LoginController {
 	}
  
     @GetMapping("/auth/logout")
-    public boolean logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
     	HttpSession session = request.getSession(false);
     	if(session != null) {
     		session.invalidate();
@@ -89,7 +89,7 @@ public class LoginController {
     	Cookie idCookie = new Cookie("userId",null);
     	idCookie.setMaxAge(0);
     	response.addCookie(idCookie);
-    	return true;
+    	return ResponseEntity.ok().body("로그아웃되었습니다.");
     }
     
 
