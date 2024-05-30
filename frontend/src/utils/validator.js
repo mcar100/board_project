@@ -6,15 +6,18 @@ const validateMap = {
   name: {
     regex: /^(?=.*[a-zA-Z])(?=.*[0-9]){1,10}.+$/,
     hint: "(영어+숫자 조합, 10자리 이하)",
+    validMsg: "이름 중복 검사를 진행해주세요.",
   },
   email: {
     regex: /^[a-zA-Z0-9_]+@[a-zA-Z0-9_]+\.[a-zA-Z_.]{2,}$/,
     hint: "(영어+숫자+특수문자(._@) 조합)",
+    validMsg: "이메일 중복 검사와 인증을 진행해주세요.",
   },
   password: {
     regex: /^[a-zA-Z!@#$%^&*()_+=-]{8,15}$/,
     //  regex: /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+=-])[a-zA-Z!@#$%^&*()_+=-]{8,15}$/,
     hint: "(영어+특수문자 조합, 8~15자리)",
+    validMsg: "비밀번호가 일치하지 않습니다.",
   },
   phone: {
     regex: /(^01[0-9])-([0-9]{3,4})-([0-9]{4})$/,
@@ -77,18 +80,25 @@ function checkFormInfo(formInfo) {
     return [false, "formInfo가 없습니다.", null];
   }
 
-  for (const [key, value] of Object.entries(formInfo)) {
+  for (const info of formInfo) {
+    const { name, value } = info;
+    const title = info.dataset.title;
+    const valid = info.dataset.valid;
     if (!isNotBlank(value)) {
-      return [false, getValidateMessage(key, "blank"), key];
+      return [false, getValidateMessage(title, "blank"), info];
     }
 
-    const vm = validateMap[key];
+    const vm = validateMap[name];
     if (!vm) {
       continue;
     }
 
     if (vm.regex && !vm.regex.test(value)) {
-      return [false, getValidateMessage(key, "error", vm.hint), key];
+      return [false, getValidateMessage(title, "error", vm.hint), info];
+    }
+
+    if (vm.validMsg && valid === "false") {
+      return [false, vm.validMsg, info];
     }
   }
   return [true, null, null];
@@ -96,10 +106,10 @@ function checkFormInfo(formInfo) {
 
 function checkFormInfoBlank(formInfo) {
   for (const info of formInfo) {
-    const infoValue = info.value;
-    const infoTitle = info.dataset.title;
-    if (!isNotBlank(infoValue)) {
-      return [false, getValidateMessage(infoTitle, "blank"), info];
+    const value = info.value;
+    const title = info.dataset.title;
+    if (!isNotBlank(value)) {
+      return [false, getValidateMessage(title, "blank"), info];
     }
   }
   return [true, "", null];

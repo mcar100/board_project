@@ -1,7 +1,7 @@
 function convertFormToObject(form) {
   const object = {};
   for (const { name, value } of form) {
-    object[name] = value;
+    if (name && value) object[name] = value;
   }
   return object;
 }

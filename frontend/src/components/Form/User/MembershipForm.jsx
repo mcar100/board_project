@@ -50,6 +50,7 @@ function NameForm() {
           placeholder="이름"
           title="한글+특수문자 불가, 10자 이하"
           data-title="이름"
+          data-valid={isCheck}
           maxLength="10"
           onBlur={handleBlur}
         />
@@ -100,6 +101,7 @@ function EmailForm() {
             placeholder="이메일주소"
             className={isVerify && "form-clear"}
             data-title="이메일"
+            data-valid={isVerify && email}
             disabled={isVerify}
           />
         </Col>
@@ -238,11 +240,9 @@ function PasswordForm() {
 
   const handleBlur = (e) => {
     if (!isNotBlank(e.target.value)) {
-      console.log("blank로 이벤트 스킵");
       return;
     }
     if (passwordForm[e.target.name] === e.target.value) {
-      console.log("일치로 이벤트 스킵");
       return;
     }
     try {
@@ -312,6 +312,7 @@ function PasswordForm() {
             placeholder="비밀번호"
             title="영어+특수문자만 입력가능, 8~15자"
             data-title="비밀번호"
+            data-valid={isPasswordCheck}
             maxLength="15"
             onBlur={handleBlur}
           />
@@ -334,20 +335,29 @@ function PasswordForm() {
 }
 
 function PhoneForm() {
+  const [phone, setPhone] = useState("");
   const [isCheck, setIsCheck] = useState(false);
   const phoneRef = useRef(null);
-  const handleBlur = () => {
-    if (!isNotBlank(phoneRef.current.value)) {
+  const handleBlur = (e) => {
+    if (!isNotBlank(e.target.value)) {
       return;
     }
-
-    const [isValid, validateMsg] = validator(phoneRef.current);
-    if (!isValid) {
-      setIsCheck(false);
-    } else {
-      setIsCheck(true);
+    if (phone === e.target.value) {
+      return;
     }
-    alert(validateMsg);
+    try {
+      setPhone(e.target.value);
+      const [isValid, validateMsg] = validator(e.target);
+      if (!isValid) {
+        setIsCheck(false);
+        throw new ValidatorAlert(validateMsg, e.target);
+      } else {
+        setIsCheck(true);
+        throw new ValidatorAlert(validateMsg);
+      }
+    } catch (thrown) {
+      thrownHandler(thrown);
+    }
   };
   return (
     <Form.Input
@@ -358,7 +368,6 @@ function PhoneForm() {
       data-title="휴대폰번호"
       placeholder="휴대폰번호"
       maxLength="13"
-      pattern="[0-9]{2,3}-[0,9]{3,4}-[0-9]{4}"
       onBlur={handleBlur}
     />
   );
