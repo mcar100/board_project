@@ -85,9 +85,11 @@ function EmailForm() {
       if (response.status === 200) {
         setEmail(emailRef.current.value);
         alert("사용가능한 이메일입니다.");
+        setIsVerify(false);
       }
     } catch (thrown) {
       setEmail("");
+      setIsVerify(false);
       thrownHandler(thrown);
     }
   };
@@ -114,7 +116,7 @@ function EmailForm() {
           />
         </Col>
       </Row>
-      {email && (
+      {email && !isVerify && (
         <EmailAuthForm
           email={email}
           isVerify={isVerify}
@@ -128,6 +130,11 @@ function EmailForm() {
 function EmailAuthForm({ email, isVerify, setIsVerify }) {
   const [isSend, setIsSend] = useState(false);
   const emailAuthRef = useRef();
+
+  useEffect(() => {
+    setIsSend(false);
+  }, [email]);
+
   const handleSendAuthBtnClick = async () => {
     try {
       const response = await callAxios.post("/auth/email", { email: email });
