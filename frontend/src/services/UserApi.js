@@ -55,3 +55,11 @@ export const checkEmailVerification = async (code) => {
   }
   return null;
 };
+
+export const getUserProfile = async () => {
+  const response = await callAxios.get("/user/profile");
+  if (response.status === 200) {
+    return { message: null, data: response.data };
+  }
+  return null;
+};

@@ -4,10 +4,12 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useContext } from "react";
 import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
+import { UserContext } from "../context/UserContext";
 
 function CustomNavbar() {
-  const username = null;
+  const user = useContext(UserContext);
   return (
     <Navbar
       expand="lg"
@@ -32,7 +34,7 @@ function CustomNavbar() {
           <Dropdown as={Nav.Item} className="no-arrow">
             <Dropdown.Toggle as={Nav.Link} id="userDropdown" role="button">
               <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                {username == null ? "게스트" : username}
+                {user && user.userInfo == null ? "게스트" : user.userInfo.name}
               </span>
               <Image
                 className="img-profile rounded-circle"
@@ -42,7 +44,7 @@ function CustomNavbar() {
               />
             </Dropdown.Toggle>
 
-            {username && (
+            {user && user.isLogin && (
               <Dropdown.Menu
                 className="dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown"

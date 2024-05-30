@@ -7,9 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/UserApi";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 function Sidebar() {
-  const userId = null;
+  const user = useContext(UserContext);
   const navigate = useNavigate();
   const handleLinkClick = (e, link) => {
     e.preventDefault();
@@ -58,7 +60,7 @@ function Sidebar() {
             id="basic-dropdown"
           >
             <h6 className="dropdown-header">Login Screens:</h6>
-            {userId == null ? (
+            {user && !user.isLogin ? (
               <>
                 <NavDropdown.Item
                   href="#"
