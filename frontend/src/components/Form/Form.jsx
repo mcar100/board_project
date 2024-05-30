@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, CardLink } from "react-bootstrap";
 import { preventInputs, replaceInputs } from "../../utils/validator";
 import CardLayout from "../Layout/CardLayout";
@@ -112,9 +113,14 @@ function FormCheckBox({ name, className = "", text, defaultValue }) {
 }
 
 function FormLink({ href, className = "", text }) {
+  const navigate = useNavigate();
+  const handleLinkClick = (e) => {
+    e.preventDefault();
+    navigate(href);
+  };
   return (
-    <div className={`text-center ${className}`}>
-      <CardLink className="small" href={href}>
+    <div className={`text-center ${className}`} onClick={handleLinkClick}>
+      <CardLink className="small" href={"#"}>
         {text}
       </CardLink>
     </div>

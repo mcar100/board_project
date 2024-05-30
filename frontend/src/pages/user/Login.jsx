@@ -8,10 +8,12 @@ import {
 } from "../../utils/convertor";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import callAxios from "../../services/axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const formRef = useRef(null);
   const [isVerify, setIsVerify] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -29,7 +31,7 @@ function Login() {
       const response = await callAxios.post("/auth/login", formData);
       if (response.status === 200) {
         alert(response.data);
-        location.href = "/";
+        navigate("/");
       }
     } catch (thrown) {
       thrownHandler(thrown);

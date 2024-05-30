@@ -5,9 +5,31 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import callAxios from "../services/axios";
 
 function Sidebar() {
   const userId = null;
+  const navigate = useNavigate();
+  const handleLinkClick = (e, link) => {
+    e.preventDefault();
+    navigate(link);
+  };
+  const handleLogoutClick = async (e) => {
+    e.preventDefault();
+    try {
+      if (!confirm("로그아웃하시겠습니까?")) {
+        return;
+      }
+      const response = await callAxios.get("/auth/logout");
+      if (response.status === 200) {
+        alert(response.data);
+        navigate("/login");
+      }
+    } catch (thrown) {
+      alert("로그아웃에 실패했습니다.");
+    }
+  };
   return (
     <Navbar
       id="accordionSidebar"
@@ -37,16 +59,29 @@ function Sidebar() {
             <h6 className="dropdown-header">Login Screens:</h6>
             {userId == null ? (
               <>
-                <NavDropdown.Item href="/login">Login</NavDropdown.Item>
-                <NavDropdown.Item href="/membership">
+                <NavDropdown.Item
+                  href="#"
+                  onClick={(e) => {
+                    handleLinkClick(e, "/login");
+                  }}
+                >
+                  Login
+                </NavDropdown.Item>
+                <NavDropdown.Item
+                  href="#"
+                  onClick={(e) => {
+                    handleLinkClick(e, "/membership");
+                  }}
+                >
                   Membership
                 </NavDropdown.Item>
               </>
             ) : (
               <NavDropdown.Item
                 href="#"
-                data-toggle="modal"
-                data-target="#customModal"
+                onClick={(e) => {
+                  handleLogoutClick(e);
+                }}
               >
                 Logout
               </NavDropdown.Item>
