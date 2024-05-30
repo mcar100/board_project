@@ -32,6 +32,10 @@ function NameForm() {
     } catch (thrown) {
       setIsCheck(false);
       if (thrown instanceof AxiosError) {
+        if (thrown.code === "ERR_NETWORK") {
+          setSpanMsg("서버 에러");
+          return;
+        }
         setSpanMsg(thrown.response.data);
       } else if (thrown instanceof Error) {
         setSpanMsg(thrown.message);

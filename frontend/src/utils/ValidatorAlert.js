@@ -23,7 +23,10 @@ function thrownHandler(thrown) {
     thrown.alert();
     thrown.focus();
   } else if (thrown instanceof AxiosError) {
-    console.log(thrown);
+    if (thrown.code === "ERR_NETWORK") {
+      alert("서버 에러");
+      return;
+    }
     alert(thrown.response.data);
   } else if (thrown instanceof Error) {
     alert(thrown.message);
