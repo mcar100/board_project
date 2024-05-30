@@ -5,8 +5,12 @@ import * as Form from "../../../components/Form/Form";
 import { isNotBlank, validator } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
 import { convertSecondToTimerFormat } from "../../../utils/convertor";
-import callAxios from "../../../services/axios";
 import { AxiosError } from "axios";
+import {
+  checkDuplicate,
+  checkEmailVerification,
+  sendEmailVerification,
+} from "../../../services/UserApi";
 
 function NameForm() {
   const [isCheck, setIsCheck] = useState();
@@ -14,20 +18,16 @@ function NameForm() {
   const nameRef = useRef(null);
   const handleBlur = async () => {
     try {
-      const { name, value } = nameRef.current;
       const [isValid, validateMsg] = validator(nameRef.current);
 
       if (!isValid) {
         throw new Error(validateMsg);
       }
 
-      const response = await callAxios.get("/users/duplication", {
-        params: { type: name, value },
-      });
-
-      if (response.status === 200) {
+      const result = await checkDuplicate(nameRef);
+      if (result) {
         setIsCheck(true);
-        setSpanMsg(response.data);
+        setSpanMsg(result.message);
       }
     } catch (thrown) {
       setIsCheck(false);
@@ -76,16 +76,11 @@ function EmailForm() {
         throw new Error(validateMsg);
       }
 
-      const response = await callAxios.get("/users/duplication", {
-        params: {
-          type: emailRef.current.name,
-          value: emailRef.current.value,
-        },
-      });
-      if (response.status === 200) {
-        setEmail(emailRef.current.value);
-        alert("사용가능한 이메일입니다.");
+      const result = await checkDuplicate(emailRef);
+      if (result) {
+        setEmail(result.value);
         setIsVerify(false);
+        alert("사용가능한 이메일입니다.");
       }
     } catch (thrown) {
       setEmail("");
@@ -137,10 +132,10 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
 
   const handleSendAuthBtnClick = async () => {
     try {
-      const response = await callAxios.post("/auth/email", { email: email });
-      if (response.status === 200) {
+      const result = await sendEmailVerification(email);
+      if (result) {
         setIsSend(true);
-        alert(response.data);
+        alert(result.message);
       }
     } catch (thrown) {
       setIsSend(false);
@@ -149,13 +144,11 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
   };
   const handleCheckAuthBtnClick = async () => {
     try {
-      const userNum = emailAuthRef.current.value;
-      const response = await callAxios.post("/auth/verification", {
-        userNum,
-      });
-      if (response.status === 200) {
+      const userCode = emailAuthRef.current.value;
+      const result = await checkEmailVerification(userCode);
+      if (result) {
         setIsVerify(true);
-        alert(response.data);
+        alert(result.message);
       }
     } catch (thrown) {
       if (thrown instanceof AxiosError && thrown.response.status === 404) {

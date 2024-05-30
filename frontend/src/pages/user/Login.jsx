@@ -1,14 +1,10 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/Form/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
-import {
-  convertFormToObject,
-  changeObjectKeyName,
-} from "../../utils/convertor";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
-import callAxios from "../../services/axios";
-import { useNavigate } from "react-router-dom";
+import { login } from "../../services/UserApi";
 
 function Login() {
   const formRef = useRef(null);
@@ -25,13 +21,11 @@ function Login() {
       if (!isCheck) {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
-      const formData = convertFormToObject(formRef.current);
-      changeObjectKeyName(formData, "g-recaptcha-response", "recaptcha");
 
-      const response = await callAxios.post("/auth/login", formData);
-      if (response.status === 200) {
-        alert(response.data);
-        navigate("/");
+      const result = await login(formRef);
+      if (result) {
+        alert(result.message);
+        navigate(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);

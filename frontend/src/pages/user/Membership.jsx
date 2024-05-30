@@ -2,10 +2,9 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/Form/User/MembershipForm";
-import callAxios from "../../services/axios";
-import { convertFormToObject } from "../../utils/convertor";
 import { checkFormInfo } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
+import { register } from "../../services/UserApi";
 
 function Membership() {
   const formRef = useRef(null);
@@ -18,12 +17,10 @@ function Membership() {
       if (!isCheck) {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
-      const formData = convertFormToObject(formRef.current);
-
-      const response = await callAxios.post("/users", formData);
-      if (response.status === 200) {
-        alert(response.data);
-        navigate("/login");
+      const result = await register(formRef);
+      if (result) {
+        alert(result.message);
+        navigate(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);

@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import callAxios from "../services/axios";
+import { logout } from "../services/UserApi";
 
 function Sidebar() {
   const userId = null;
@@ -21,10 +21,11 @@ function Sidebar() {
       if (!confirm("로그아웃하시겠습니까?")) {
         return;
       }
-      const response = await callAxios.get("/auth/logout");
-      if (response.status === 200) {
-        alert(response.data);
-        navigate("/login");
+
+      const result = await logout();
+      if (result) {
+        alert(result.message);
+        navigate(result.url);
       }
     } catch (thrown) {
       alert("로그아웃에 실패했습니다.");
