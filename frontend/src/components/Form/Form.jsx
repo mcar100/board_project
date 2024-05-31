@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, CardLink } from "react-bootstrap";
 import { preventInputs, replaceInputs } from "../../utils/validator";
-import CardLayout from "../Layout/CardLayout";
+import CardLayout from "../Layout/AuthCardLayout";
 
 function FormFrame({ children, formRef, className, onSubmit, text, expand }) {
   return (
