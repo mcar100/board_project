@@ -1,16 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useDaumPostcodePopup } from "react-daum-postcode";
-import * as Form from "../../../components/Form/Form";
-import Timer from "../../Common/Timer";
-import { isNotBlank, validator } from "../../../utils/validator";
-import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
+import * as Form from "../../components/Form/Form";
+import Timer from "../Common/Timer";
+import { isNotBlank, validator } from "../../utils/validator";
+import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { AxiosError } from "axios";
 import {
   checkDuplicate,
   checkEmailVerification,
   sendEmailVerification,
-} from "../../../services/UserApi";
+} from "../../services/UserApi";
 
 function NameForm() {
   const [isCheck, setIsCheck] = useState();

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
-import * as UserForm from "../../components/Form/User/LoginForm";
+import * as UserForm from "../../components/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { login } from "../../services/UserApi";

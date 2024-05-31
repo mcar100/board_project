@@ -1,4 +1,4 @@
-import * as Form from "../../../components/Form/Form";
+import * as Form from "../../components/Form/Form";
 import cookies from "react-cookies";
 import ReCAPTCHA from "react-google-recaptcha";
 

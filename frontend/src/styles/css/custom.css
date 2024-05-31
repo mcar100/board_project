@@ -52,3 +52,7 @@
 .form-group > div {
   margin-bottom: 0px !important;
 }
+
+.visually-hidden {
+  display: none;
+}

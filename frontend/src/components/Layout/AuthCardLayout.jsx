@@ -1,6 +1,6 @@
 import { Card, CardBody, Col, Container, Row } from "react-bootstrap";
 
-function CardLayout({ children, title, expand }) {
+function AuthCardLayout({ children, title, expand }) {
   return (
     <Container fluid className="bg-gradient-primary">
       <Container>
@@ -32,4 +32,4 @@ function CardLayout({ children, title, expand }) {
     </Container>
   );
 }
-export default CardLayout;
+export default AuthCardLayout;

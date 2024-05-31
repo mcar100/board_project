@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, CardLink } from "react-bootstrap";
 import { preventInputs, replaceInputs } from "../../utils/validator";
-import CardLayout from "../Layout/AuthCardLayout";
+import AuthCardLayout from "../Layout/AuthCardLayout";
 
 function FormFrame({ children, formRef, className, onSubmit, text, expand }) {
   return (
-    <CardLayout title={text} expand={expand ? true : false}>
+    <AuthCardLayout title={text} expand={expand ? true : false}>
       {" "}
       <Form className={className} onSubmit={onSubmit} ref={formRef}>
         {children}
       </Form>
-    </CardLayout>
+    </AuthCardLayout>
   );
 }
 
