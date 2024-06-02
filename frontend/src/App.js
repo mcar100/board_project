@@ -3,6 +3,7 @@ import Home from "./pages/board/Home";
 import { ContentLayout } from "./components/Layout/ContentLayout";
 import Login from "./pages/user/Login";
 import Membership from "./pages/user/Membership";
+import Board from "./pages/board/Board";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<ContentLayout />}>
           <Route index element={<Home />} />
+          <Route path="/boards/:id" element={<Board />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/membership" element={<Membership />} />

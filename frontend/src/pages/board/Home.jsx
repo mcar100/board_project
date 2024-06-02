@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
+import BoardTable from "../../components/Board/BoardTable";
 import Pagination from "../../components/Common/Pagination";
-import BoardCardLayout from "../../components/Layout/BoardCardLayout";
-import TableLayout from "../../components/Layout/TableLayout";
 import { getBoardList } from "../../services/BoardApi";
 
 function Home() {
@@ -30,18 +28,15 @@ function Home() {
   }, [pageInfo.pageNo]);
 
   return (
-    <Container fluid>
-      <h1 className="h3 mb-2 text-gray-800">게시판</h1>
-      <BoardCardLayout>
-        <TableLayout data={tableList} />
-        <Pagination
-          pageSize={pageInfo.pageSize}
-          currentPageNo={pageInfo.pageNo}
-          lastPageNo={pageInfo.lastPageNo}
-          setPageInfo={setPageInfo}
-        />
-      </BoardCardLayout>
-    </Container>
+    <>
+      <BoardTable data={tableList} />
+      <Pagination
+        pageSize={pageInfo.pageSize}
+        currentPageNo={pageInfo.pageNo}
+        lastPageNo={pageInfo.lastPageNo}
+        setPageInfo={setPageInfo}
+      />
+    </>
   );
 }
 

@@ -1,6 +1,12 @@
 import { Table, CardLink } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-function TableLayout({ data }) {
+function BoardTable({ data }) {
+  const navigate = useNavigate();
+  const handleTitleClick = (e, n) => {
+    e.preventDefault();
+    navigate(`/boards/${n}`);
+  };
   return (
     <Table responsive bordered cellSpacing={0}>
       <colgroup>
@@ -23,13 +29,20 @@ function TableLayout({ data }) {
         {data ? (
           data.map((el) => (
             <tr key={`table ${el.rowNum}`}>
-              <td>{el.rowNum}</td>
+              <td className="text-center">{el.rowNum}</td>
               <td>{el.userName}</td>
               <td>
-                <CardLink href={`/board/detail/${el.no}`}>{el.title}</CardLink>
+                <CardLink
+                  href={`#`}
+                  onClick={(e) => {
+                    handleTitleClick(e, el.boardId);
+                  }}
+                >
+                  {el.title}
+                </CardLink>
               </td>
               <td>{el.createdAt}</td>
-              <td>{el.commentsCount}</td>
+              <td className="text-center">{el.commentsCount}</td>
             </tr>
           ))
         ) : (
@@ -37,7 +50,7 @@ function TableLayout({ data }) {
             <td className="text-center">0</td>
             <td>robot</td>
             <td>
-              <CardLink href="/board/detail/1">default-title</CardLink>
+              <CardLink href="/boards/1">default-title</CardLink>
             </td>
             <td>2024-2-29</td>
             <td className="text-center">0</td>
@@ -48,4 +61,4 @@ function TableLayout({ data }) {
   );
 }
 
-export default TableLayout;
+export default BoardTable;
