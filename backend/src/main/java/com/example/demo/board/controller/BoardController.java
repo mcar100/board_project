@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,18 +16,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.board.model.Board;
+import com.example.demo.board.model.BoardListResponse;
 import com.example.demo.board.model.Comment;
 import com.example.demo.board.model.FileDTO;
+import com.example.demo.board.model.SearchDTO;
 import com.example.demo.board.service.BoardService;
 import com.example.demo.board.service.CommentService;
 import com.example.demo.board.service.FileService;
+import com.example.demo.util.PaginationHelper;
 
-@Controller
-@RequestMapping("/board")
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
 public class BoardController {
 	
 	@Autowired
@@ -36,13 +43,37 @@ public class BoardController {
 	@Autowired
 	CommentService commentService;
 	
-	@RequestMapping
-    public String goBoard(HttpServletRequest request) throws Exception {
-    	return "/board/board";
+    @GetMapping("/boards")
+    public ResponseEntity<BoardListResponse> getBoardList(@RequestParam(value="pageNo", required = true, defaultValue="1") int pageNo, HttpServletRequest request) throws Exception {
+		try {
+	 		log.info(request.getRequestURI()+"");
+			int boardCount = boardService.countBoardList();
+			SearchDTO searchDTO = new SearchDTO(pageNo, 10,boardCount);
+			int lastPageNo = PaginationHelper.getEndPageNo(searchDTO);
+			
+			
+			ArrayList<HashMap<String,Object>> boardList = boardService.getBoardListInfo(searchDTO);
+			if(boardList.size()==0) {
+				throw new Exception("데이터가 없습니다. 더미데이터 반환");
+			}
+			
+			BoardListResponse responseData = new BoardListResponse();
+			responseData.setPageNo(pageNo);
+			responseData.setLastPageNo(lastPageNo);
+			responseData.setPageSize(10);
+			responseData.setBoardList(boardList);
+
+	 		log.info("get boardList page: "+pageNo);
+	        return ResponseEntity.ok().body(responseData); 
+		}
+		catch(Exception e) {
+			log.error(e.getMessage()+"");
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); 
+		}    	
+
     }
 
-	@PostMapping
-	@ResponseBody
+	@PostMapping("/boards")
 	public Integer createBoard(@RequestBody Board board, HttpServletRequest request) throws Exception{		
 		try {
 			if(board==null) {
@@ -68,7 +99,7 @@ public class BoardController {
 		}
 	}
 	
-	@GetMapping("/detail/{boardId}")
+	@GetMapping("/boards/{boardId}")
     public String goBoardDetail(@PathVariable("boardId") Integer boardId, Model model) throws Exception {
 		try {
 			if(boardId==null) {

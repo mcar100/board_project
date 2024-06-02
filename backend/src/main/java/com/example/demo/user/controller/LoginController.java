@@ -41,7 +41,6 @@ public class LoginController {
     			throw new Exception("요청된 정보가 없습니다.");
     		}
     		
-    		log.info(loginFormat.getEmail() +" " +loginFormat.getPassword()+" "+loginFormat.getEmailCheck() +"");
 			User user = userService.getUserByEmailAndPassword(loginFormat.getEmail(), loginFormat.getPassword());
     		if(user == null) {
     			throw new Exception("이메일 혹은 비밀번호가 틀렸습니다.");
@@ -72,6 +71,8 @@ public class LoginController {
     		
     		Cookie idCookie = CookieHelper.create("userId",String.valueOf(user.getId()),"/",1800);
     		response.addCookie(idCookie);
+    		
+    		log.info(loginFormat.getEmail()+" login");
     		return ResponseEntity.ok().body("로그인되었습니다.");
 		} catch (Exception e) {
 			log.error(e.getMessage()+"");
@@ -81,6 +82,7 @@ public class LoginController {
  
     @GetMapping("/auth/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+		log.info(request.getRequestURI()+"");
     	HttpSession session = request.getSession(false);
     	if(session != null) {
     		session.invalidate();
@@ -89,6 +91,7 @@ public class LoginController {
     	Cookie idCookie = new Cookie("userId",null);
     	idCookie.setMaxAge(0);
     	response.addCookie(idCookie);
+		log.info(session.getId()+" logout");
     	return ResponseEntity.ok().body("로그아웃되었습니다.");
     }
     
@@ -106,7 +109,7 @@ public class LoginController {
 	    	return ResponseEntity.ok().body(userData.getName());
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage()+"");
 	    	return ResponseEntity.ok().body(null);
 		}    	
     }
