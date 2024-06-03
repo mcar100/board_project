@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Detail from "../../components/Board/Detail";
+import BoardDetail from "../../components/Board/BoardDetail";
 
 const DETAIL = 1;
 
 function Board() {
   const [pageType, setPageType] = useState(DETAIL);
 
-  return <>{pageType === DETAIL && <Detail />}</>;
+  return <>{pageType === DETAIL && <BoardDetail />}</>;
 }
 
 export default Board;

@@ -1,9 +1,40 @@
+import {
+  FILE_MAX_COUNT as fMaxCount,
+  FILENAME_MAX_LENGTH as fNameMaxLength,
+  FILE_HEAD_LIMIT as fHeadLimit,
+} from "./constants";
+
 const uploadList = [];
 const originNameList = [];
 const removeIdList = [];
-const fMaxCount = 3;
-const fNameMaxLength = 20;
-const headLimit = 8;
+
+function downloadFile(response) {
+  const blob = new Blob([response.data]);
+  const fileObjectUrl = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = fileObjectUrl;
+  link.style.display = "none";
+
+  link.download = extractDownloadFilename(response);
+  console.log(link);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.URL.revokeObjectURL(fileObjectUrl);
+}
+
+function extractDownloadFilename(response) {
+  const disposition = response.headers["content-disposition"];
+  if (!disposition) return response.config.params.originalName;
+  const fname = decodeURI(
+    disposition
+      .match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
+      .replace(/['"]/g, "")
+  );
+  return fname;
+}
 
 function loadOriginFiles() {
   $("#fileOriginNameList > li").each(function () {
@@ -81,9 +112,9 @@ function processFileName(fullName) {
   const fName = fullNameArray.join("");
 
   if (fName.length > fNameMaxLength) {
-    const tailLimit = fName.length - headLimit;
+    const tailLimit = fName.length - fHeadLimit;
     return (
-      fName.substr(0, headLimit) +
+      fName.substr(0, fHeadLimit) +
       "..." +
       fName.substr(tailLimit + 1) +
       "." +
@@ -106,6 +137,7 @@ function getFileCount() {
 }
 
 export {
+  downloadFile,
   loadOriginFiles,
   addFile,
   removeFile,

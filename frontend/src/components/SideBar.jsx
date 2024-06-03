@@ -40,7 +40,11 @@ function Sidebar() {
     >
       <Nav className="flex-column ml-auto">
         <Navbar.Brand
-          href="/"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/");
+          }}
           className="sidebar-brand d-flex align-items-center justify-content-center"
         >
           <div className="sidebar-brand-icon rotate-n-15">

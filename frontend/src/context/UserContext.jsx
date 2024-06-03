@@ -14,7 +14,7 @@ export function UserProvider({ children }) {
     async function updateUser() {
       try {
         const result = await getUserProfile();
-        if (result) {
+        if (result && result.data) {
           setUser((prev) => ({
             ...prev,
             userInfo: {
