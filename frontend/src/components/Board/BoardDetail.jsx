@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import FileDetail from "./File/FileDetail";
 import CommentDetail from "./Comment/CommentDetail";
 import { MODIFY } from "../../utils/constants";
+import { deleteBoard } from "../../services/BoardApi";
 
 function BoardDetail({
+  boardId,
   boardData,
   fileDataList,
   commentDataList,
@@ -16,10 +18,15 @@ function BoardDetail({
   const username = userContext.userInfo ? userContext.userInfo.name : "";
   const navigate = useNavigate();
 
-  const handleDeleteClick = () => {
-    if (confirm("정말 삭제하시겠습니까?")) {
-      alert("삭제되었습니다.");
-      navigate("/");
+  const handleDeleteClick = async () => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+
+    const result = await deleteBoard(boardId);
+    if (result.success) {
+      alert(result.message);
+      navigate(result.url);
+    } else {
+      alert(result.message);
     }
   };
 
@@ -52,7 +59,7 @@ function BoardDetail({
         <pre>{boardData.content}</pre>
       </Card.Body>
       <FileDetail fileList={fileDataList} />
-      {commentDataList && (
+      {commentDataList.length > 0 && (
         <Card.Footer>
           <CommentDetail commentList={commentDataList} />
         </Card.Footer>

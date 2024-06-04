@@ -1,26 +1,33 @@
 import { useRef } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { writeBoard } from "../../services/BoardApi";
+import { updateBoard, writeBoard } from "../../services/BoardApi";
+import { updateFile } from "../../services/FileApi";
 import { DETAIL } from "../../utils/constants";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import * as Form from "../Form/Form";
+import FileWrite from "./File/FileWrite";
 
-function BoardWrite({ boardData, fileDataList, setPageType }) {
+function BoardWrite({ boardId, boardData, fileDataList, setPageType }) {
   const formRef = useRef(null);
+  const fileRef = useRef({
+    originIdList: [],
+    newFiles: [],
+  });
   const navigate = useNavigate();
 
   const handleModifySubmit = (e) => {
     e.preventDefault();
+    if (!confirm("수정하시겠습니까?")) return;
+
     if (boardData) {
       setPageType(DETAIL);
     }
   };
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    console.log(formRef.current);
-    if (!confirm("작성하시겠습니까?")) return;
+    if (!confirm(boardData ? "수정하시겠습니까?" : "작성하시겠습니까?")) return;
 
     try {
       const [isCheck, checkMsg, invalidTarget] = checkFormInfoBlank(
@@ -29,11 +36,24 @@ function BoardWrite({ boardData, fileDataList, setPageType }) {
       if (!isCheck) {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
-      const result = await writeBoard(formRef);
-      if (result) {
-        alert(result.message);
-        navigate(result.url);
+
+      let boardResult;
+      if (boardData && boardId) {
+        boardResult = await updateBoard(formRef, boardId);
+      } else {
+        boardResult = await writeBoard(formRef);
       }
+
+      if (!boardResult.success) {
+        throw new ValidatorAlert(boardResult.message);
+      }
+      const resultId = boardResult.boardId;
+      const fileResult = await updateFile(fileRef, resultId);
+      if (!fileResult.success) {
+        throw new ValidatorAlert(fileResult.message);
+      }
+      alert(boardResult.message);
+      navigate(boardResult.url);
     } catch (thrown) {
       thrownHandler(thrown);
     }
@@ -43,13 +63,14 @@ function BoardWrite({ boardData, fileDataList, setPageType }) {
     <Form.Frame
       className="h-100"
       formRef={formRef}
-      onSubmit={boardData ? handleModifySubmit : handleCreateSubmit}
+      onSubmit={handleCreateSubmit}
     >
       <Card className="shadow mb-4 h-100">
         <Card.Header className="py-3 h-25">
           <Row>
             <Col sm={10} className="float-left">
               <Form.Input
+                name="title"
                 className="mt-3"
                 data-title="제목"
                 placeholder="제목"
@@ -67,11 +88,15 @@ function BoardWrite({ boardData, fileDataList, setPageType }) {
         </Card.Header>
         <Card.Body style={{ minHeight: 290, height: 300 }}>
           <Form.Textarea
+            name="content"
             className="h-100"
             data-title="내용"
             defaultValue={boardData && boardData.content}
             cols={30}
           />
+        </Card.Body>
+        <Card.Body>
+          <FileWrite originFiles={fileDataList} fileRef={fileRef} />
         </Card.Body>
       </Card>
     </Form.Frame>

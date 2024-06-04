@@ -16,8 +16,8 @@ function Board() {
     writer: "이름",
     content: "내용",
   });
-  const [fileDataList, setFileDataList] = useState(null);
-  const [commentDataList, setCommentDataList] = useState(null);
+  const [fileDataList, setFileDataList] = useState([]);
+  const [commentDataList, setCommentDataList] = useState([]);
 
   if (pageType !== WRITE) {
     useEffect(() => {
@@ -47,6 +47,7 @@ function Board() {
     <>
       {pageType === DETAIL && (
         <BoardDetail
+          boardId={boardId}
           boardData={boardData}
           fileDataList={fileDataList}
           commentDataList={commentDataList}
@@ -56,6 +57,7 @@ function Board() {
       {pageType === WRITE && <BoardWrite />}
       {pageType === MODIFY && (
         <BoardWrite
+          boardId={boardId}
           boardData={boardData}
           fileDataList={fileDataList}
           setPageType={setPageType}

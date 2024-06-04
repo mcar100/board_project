@@ -12,6 +12,7 @@ function Membership() {
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
+    console.log(formRef.current);
     try {
       const [isCheck, checkMsg, invalidTarget] = checkFormInfo(formRef.current);
       if (!isCheck) {

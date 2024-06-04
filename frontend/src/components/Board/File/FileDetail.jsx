@@ -1,6 +1,6 @@
 import { CardBody } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getFile } from "../../../services/BoardApi";
+import { getFile } from "../../../services/FileApi";
 import { processFileName } from "../../../utils/fileHandler";
 
 function File({ fileList }) {

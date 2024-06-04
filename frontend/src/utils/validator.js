@@ -70,7 +70,7 @@ function checkFormInfoBlank(formInfo) {
   for (const info of formInfo) {
     const value = info.value;
     const title = info.dataset.title;
-    if (!isNotBlank(value)) {
+    if (value && !isNotBlank(value)) {
       return [false, getValidateMessage(title, "blank"), info];
     }
   }

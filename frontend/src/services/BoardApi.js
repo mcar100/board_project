@@ -1,4 +1,4 @@
-import { download, downloadFile } from "../utils/fileHandler";
+import { convertFormToObject } from "../utils/convertor";
 import callAxios from "./axios";
 
 export const getBoardList = async (pageNo) => {
@@ -25,30 +25,64 @@ export const getBoardData = async (boardId) => {
   }
 };
 
-export const writeBoard = async () => {
+export const writeBoard = async (formRef) => {
   try {
-    const response = await callAxios.post("/boards");
+    const formData = convertFormToObject(formRef.current);
+
+    const response = await callAxios.post("/boards", formData);
     if (response.status === 200) {
-      return { boardId: response.data, message: "작성되었습니다.", url: "/" };
+      return {
+        success: true,
+        boardId: response.data,
+        message: "게시글이 등록되었습니다.",
+        url: "/",
+      };
     }
   } catch (thrown) {
     console.log(thrown);
-    return null;
+    return {
+      success: false,
+      message: "게시글 등록에 실패했습니다.",
+    };
   }
 };
 
-export const getFile = async (oname, uname) => {
+export const updateBoard = async (formRef, boardId) => {
   try {
-    const response = await callAxios.get("/files", {
-      params: { originalName: oname, uploadedName: uname },
-      responseType: "blob",
-    });
+    const formData = convertFormToObject(formRef.current);
+
+    const response = await callAxios.put(`/boards/${boardId}`, formData);
     if (response.status === 200) {
-      downloadFile(response);
+      return {
+        success: true,
+        boardId: boardId,
+        message: "게시글이 수정되었습니다.",
+        url: "/",
+      };
     }
-    console.log(response);
   } catch (thrown) {
     console.log(thrown);
-    return null;
+    return {
+      success: false,
+      message: "게시글 수정에 실패했습니다.",
+    };
+  }
+};
+
+export const deleteBoard = async (boardId) => {
+  try {
+    const response = await callAxios.delete(`/boards/${boardId}`);
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: "게시글이 삭제되었습니다.",
+        url: "/",
+      };
+    }
+  } catch (thrown) {
+    return {
+      success: false,
+      message: "게시글 삭제에 실패했습니다.",
+    };
   }
 };
