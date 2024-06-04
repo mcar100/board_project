@@ -27,7 +27,7 @@ function Membership() {
     }
   };
   return (
-    <Form.Frame
+    <Form.AuthFrame
       id="registerForm"
       className="user"
       expand
@@ -43,7 +43,7 @@ function Membership() {
       <Form.Button isSubmit value="Register Account" />
       <hr />
       <Form.Link text="Already have an account? Login!" href="/login" />
-    </Form.Frame>
+    </Form.AuthFrame>
   );
 }
 

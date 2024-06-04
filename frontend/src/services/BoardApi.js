@@ -13,11 +13,23 @@ export const getBoardList = async (pageNo) => {
   }
 };
 
-export const getBoardDetail = async (boardId) => {
+export const getBoardData = async (boardId) => {
   try {
     const response = await callAxios.get(`/boards/${boardId}`);
     if (response.status === 200) {
       return response.data;
+    }
+  } catch (thrown) {
+    console.log(thrown);
+    return null;
+  }
+};
+
+export const writeBoard = async () => {
+  try {
+    const response = await callAxios.post("/boards");
+    if (response.status === 200) {
+      return { boardId: response.data, message: "작성되었습니다.", url: "/" };
     }
   } catch (thrown) {
     console.log(thrown);

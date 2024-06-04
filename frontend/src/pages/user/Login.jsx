@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/User/LoginForm";
@@ -33,7 +33,7 @@ function Login() {
   };
 
   return (
-    <Form.Frame
+    <Form.AuthFrame
       className="user"
       onSubmit={handleSubmitForm}
       formRef={formRef}
@@ -69,7 +69,7 @@ function Login() {
       <hr />
       <Form.Link text="Create an Account!" href="/membership" />
       <Form.Link text="Home" href="/" />
-    </Form.Frame>
+    </Form.AuthFrame>
   );
 }
 

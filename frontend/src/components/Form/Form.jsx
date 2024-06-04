@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, CardLink } from "react-bootstrap";
+import { Form, CardLink, FloatingLabel } from "react-bootstrap";
 import { preventInputs, replaceInputs } from "../../utils/validator";
 import AuthCardLayout from "../Layout/AuthCardLayout";
 
-function FormFrame({ children, formRef, className, onSubmit, text, expand }) {
+function AuthFormFrame({
+  children,
+  formRef,
+  className,
+  onSubmit,
+  text,
+  expand,
+}) {
   return (
     <AuthCardLayout title={text} expand={expand ? true : false}>
       {" "}
@@ -12,6 +19,14 @@ function FormFrame({ children, formRef, className, onSubmit, text, expand }) {
         {children}
       </Form>
     </AuthCardLayout>
+  );
+}
+
+function FormFrame({ children, formRef, className, onSubmit }) {
+  return (
+    <Form className={className} onSubmit={onSubmit} ref={formRef}>
+      {children}
+    </Form>
   );
 }
 
@@ -63,6 +78,38 @@ function FormInput({
         {...otherProps}
       ></Form.Control>
     </Form.Group>
+  );
+}
+
+function FormTextarea({
+  className = "",
+  name,
+  placeholder,
+  defaultValue,
+  ...otherProps
+}) {
+  const [inputValue, setInputValue] = useState("");
+  const handleChangeInput = (e) => {
+    setInputValue(e.target.value);
+    return;
+  };
+
+  useEffect(() => {
+    if (!defaultValue) return;
+    setInputValue(defaultValue);
+  }, [defaultValue]);
+
+  return (
+    <Form.Control
+      as="textarea"
+      name="content"
+      className={className}
+      placeholder={placeholder ? placeholder : "내용"}
+      style={{ resize: "none" }}
+      onChange={handleChangeInput}
+      value={inputValue}
+      {...otherProps}
+    ></Form.Control>
   );
 }
 
@@ -128,10 +175,12 @@ function FormLink({ href, className = "", text }) {
 }
 
 export {
+  AuthFormFrame as AuthFrame,
   FormFrame as Frame,
   FormText as Text,
   FormGroup as Group,
   FormInput as Input,
+  FormTextarea as Textarea,
   FormButton as Button,
   FormCheckBox as CheckBox,
   FormLink as Link,

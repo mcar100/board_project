@@ -22,7 +22,7 @@ function BoardTable({ data }) {
           <th>닉네임</th>
           <th>제목</th>
           <th>날짜</th>
-          <th>댓글</th>
+          <th className="text-center">댓글</th>
         </tr>
       </thead>
       <tbody>
