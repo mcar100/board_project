@@ -2,27 +2,32 @@ package com.example.demo.board.controller;
 
 import java.nio.charset.StandardCharsets;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 
+import com.example.demo.board.model.FileIdRequest;
 import com.example.demo.board.service.FileService;
 
-@Controller
-@RequestMapping("/file")
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
 public class FileController {
 	
 	@Autowired
@@ -30,10 +35,10 @@ public class FileController {
 	@Value("${upload.path}")
 	private String uploadPath;
 	
-	@ResponseBody
-	@PostMapping("/{boardId}")
-	public boolean uploadFile(@PathVariable("boardId") Integer boardId, @RequestPart("formData") MultipartFile[] files) throws Exception {
+	@PostMapping("files/{boardId}")
+	public ResponseEntity<Boolean> uploadFile(@PathVariable("boardId") Integer boardId, @RequestPart("formData") MultipartFile[] files, HttpServletRequest request) throws Exception {
 		try {
+			log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null||files==null) {
 				throw new Exception("요청된 파일 정보가 없습니다.");
 			}
@@ -48,56 +53,58 @@ public class FileController {
 			
 			if(!result) {
 				throw new Exception("File Service 에러");
-			}
-			return true;
+			}  
+			log.info("upload file");
+			return ResponseEntity.ok().body(true);
 			
 		}
-		catch(Exception err) {
-			System.out.println(err.getMessage());
-			err.printStackTrace();
-			return false;
+		catch(Exception e) {
+			log.error(e.getMessage()+"");
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 		}
 	}
 	
-	@ResponseBody
-	@DeleteMapping("/{boardId}")
-	public boolean deleteFile(@PathVariable("boardId") Integer boardId, @RequestBody Integer[] fileIdList) throws Exception {
+	@DeleteMapping("files/{boardId}")
+	public ResponseEntity<Boolean> deleteFile(@PathVariable("boardId") Integer boardId, @RequestBody FileIdRequest fileIdRequest, HttpServletRequest request) throws Exception {
 		try {
-			if(boardId==null||fileIdList==null) {
+			log.info(request.getMethod()+" "+request.getRequestURI()+"");
+			if(boardId==null||fileIdRequest==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
 			
-			boolean result = fileService.deleteFilesInfoById(boardId, fileIdList);
+			boolean result = fileService.deleteFilesInfoById(boardId, fileIdRequest.getFileIdList());
 			
 			if(!result) {
 				throw new Exception("Board Service 에러");
 			}
 			
-			return true;
+			return ResponseEntity.ok().body(true);
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
+			log.error(e.getMessage()+"");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 		}
 	}
 	
-	@ResponseBody
-	@RequestMapping("/download")
-	public ResponseEntity<UrlResource> downloadFile(@RequestParam("uploadedName") String uploadedName, @RequestParam("originalName") String originalName) throws Exception{
+	@GetMapping("files")
+	public ResponseEntity<UrlResource> downloadFile(@RequestParam("uploadedName") String uploadedName, @RequestParam("originalName") String originalName, HttpServletRequest request ) throws Exception{
 		try {
+			log.info(request.getMethod()+" "+request.getRequestURI()+" originalName:"+originalName);
 			if(uploadedName==null||originalName==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
 			
 			UrlResource resource = new UrlResource("file:"+uploadPath+uploadedName);
 			String encodedName = UriUtils.encode(originalName, StandardCharsets.UTF_8);
-			String contentDisposition = "attachment; filename=\""+encodedName+"\"";
+			String contentDisposition = "attachment;filename=\""+encodedName+"\"";
+			System.out.println(contentDisposition);
 			return ResponseEntity.ok()
 						.header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
 						.body(resource);
 		}
 		catch(Exception err) {
-			System.out.println("다운로드 실패");
+			log.error("다운로드 실패 "+err.getMessage());
 			return null;
 		}
 	}

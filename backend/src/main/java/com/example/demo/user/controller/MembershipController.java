@@ -35,7 +35,7 @@ public class MembershipController{
 	
 	@PostMapping("/users")
     public ResponseEntity<String> signUp(@RequestBody User user,HttpServletRequest request) throws Exception {
-		log.info(request.getRequestURI()+"");
+		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 		try {
 			if(user==null) {
 				throw new Exception("요청된 정보가 올바르지 않습니다.");
@@ -56,7 +56,7 @@ public class MembershipController{
 	@GetMapping("/users/duplication")
     public ResponseEntity<String> checkInfoDuplicate(@RequestParam Map<String, Object> map, HttpServletRequest request) throws Exception {
 		try {
-			log.info(request.getRequestURI()+"");
+			log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(map==null) {
 				throw new Exception("요청된 정보가 올바르지 않습니다.");
 			}
@@ -78,7 +78,7 @@ public class MembershipController{
 	
 	@PostMapping("/auth/email")
 	public ResponseEntity<String> sendEmailVerification(@RequestBody User user, HttpSession session, HttpServletRequest request) throws Exception {
-		log.info(request.getRequestURI()+"");
+		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 		try {
 			if(user==null||user.getEmail()==null) {
 				throw new Exception("요청된 정보가 올바르지 않습니다.");

@@ -35,7 +35,7 @@ public class LoginController {
     public ResponseEntity<String> login(
     		@RequestBody LoginFormat loginFormat, HttpServletRequest request, HttpServletResponse response) throws Exception {    	
     	try {
-    		log.info(request.getRequestURI()+"");
+    		log.info(request.getMethod()+" "+request.getRequestURI()+"");
     		
     		if(loginFormat==null) {
     			throw new Exception("요청된 정보가 없습니다.");
@@ -82,7 +82,7 @@ public class LoginController {
  
     @GetMapping("/auth/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-		log.info(request.getRequestURI()+"");
+    	log.info(request.getMethod()+" "+request.getRequestURI()+"");
     	HttpSession session = request.getSession(false);
     	if(session != null) {
     		session.invalidate();
@@ -98,7 +98,7 @@ public class LoginController {
     @GetMapping("/user/profile")
     public ResponseEntity<Object> getUserInfo(HttpServletRequest request, HttpServletResponse response){
     	try {
-    		log.info(request.getRequestURI()+"");
+    		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			HttpSession session = request.getSession(false);
 			Integer userId = (Integer)session.getAttribute("userId");
 			if(userId==null) {

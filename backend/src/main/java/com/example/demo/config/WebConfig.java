@@ -21,6 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(clientUrl)  // 실제 배포 도메인으로 설정
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
+                .exposedHeaders("Content-Disposition")
                 .allowCredentials(true);
     }
 	

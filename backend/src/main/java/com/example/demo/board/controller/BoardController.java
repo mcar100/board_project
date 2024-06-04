@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.board.model.Board;
+import com.example.demo.board.model.BoardDetailResponse;
 import com.example.demo.board.model.BoardListResponse;
 import com.example.demo.board.model.Comment;
 import com.example.demo.board.model.FileDTO;
@@ -46,7 +45,7 @@ public class BoardController {
     @GetMapping("/boards")
     public ResponseEntity<BoardListResponse> getBoardList(@RequestParam(value="pageNo", required = true, defaultValue="1") int pageNo, HttpServletRequest request) throws Exception {
 		try {
-	 		log.info(request.getRequestURI()+"");
+	 		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			int boardCount = boardService.countBoardList();
 			SearchDTO searchDTO = new SearchDTO(pageNo, 10,boardCount);
 			int lastPageNo = PaginationHelper.getEndPageNo(searchDTO);
@@ -74,8 +73,9 @@ public class BoardController {
     }
 
 	@PostMapping("/boards")
-	public Integer createBoard(@RequestBody Board board, HttpServletRequest request) throws Exception{		
+	public ResponseEntity<Integer> createBoard(@RequestBody Board board, HttpServletRequest request) throws Exception{		
 		try {
+	 		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(board==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
@@ -91,57 +91,61 @@ public class BoardController {
 			if(!result) {
 				throw new Exception("Board Service 에러");
 			}
-			return board.getId();
+	 		log.info("create board "+board.getId());
+			return ResponseEntity.ok().body(board.getId());
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return null;
+			log.error(e.getMessage());
+			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
 	
 	@GetMapping("/boards/{boardId}")
-    public String goBoardDetail(@PathVariable("boardId") Integer boardId, Model model) throws Exception {
+    public ResponseEntity<BoardDetailResponse> goBoardDetail(@PathVariable("boardId") Integer boardId, HttpServletRequest request) throws Exception {
 		try {
+	 		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
 			
+			// 상세 페이지 데이터 설정하기
+			BoardDetailResponse boardDetailResponse = new BoardDetailResponse();
+			
 			// 게시글 정보 가져오기
 			HashMap<String,Object> boardInfo = boardService.getBoardDetailInfo(boardId);
-
 			if(boardInfo==null) {
 				throw new Exception("Board Service 에러");
 			}
 			else if(!boardInfo.get("boardStatus").equals("PUBLIC")) {
 				throw new Exception("삭제 혹은 비공개된 글입니다.");
 			}
-			model.addAttribute("boardData", boardInfo);
+			boardDetailResponse.setBoardInfo(boardInfo);
 			
 			// 파일정보 가져오기
 			FileDTO[] filesInfo = fileService.getFileInfo(boardId);
 			if(filesInfo!=null) {
-				model.addAttribute("filesData",filesInfo);
+				boardDetailResponse.setFilesInfo(filesInfo);
 			}
 			
 			// 댓글정보 가져오기
 			ArrayList<Comment> commentsInfo = commentService.getCommentList(boardId);
 			if(commentsInfo!=null) {
-				model.addAttribute("commentsData", commentsInfo);
+				boardDetailResponse.setCommentsInfo(commentsInfo);
 			}
+			log.info("get board details: "+boardId);
+			return ResponseEntity.ok().body(boardDetailResponse);
 		}
 		catch(Exception e) {
+			log.error(e.getMessage());
 			e.printStackTrace();
-			System.out.println(e.getMessage());
-			model.addAttribute("error", true);
-			model.addAttribute("errorMsg", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
-    	return "/board/detail";
     }
 	
-	@DeleteMapping("/detail/{boardId}")
-    @ResponseBody
-	public boolean deleteBoard(@PathVariable("boardId") Integer boardId) throws Exception {
+	@DeleteMapping("/boards/{boardId}")
+	public ResponseEntity<Boolean> deleteBoard(@PathVariable("boardId") Integer boardId, HttpServletRequest request) throws Exception {
 		try {
+	 		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
@@ -149,78 +153,19 @@ public class BoardController {
 			if(!result) {
 				throw new Exception("Board Service 에러");
 			}
-			return true;
+			log.info(boardId+" board deleted");
+			return ResponseEntity.ok().body(true);
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
+	 		log.error(e.getMessage());
+	 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 		}
     }
 	
-	@DeleteMapping("/detail/admin/{boardId}")
-    @ResponseBody
-	public boolean deleteHardBoard(@PathVariable("boardId") Integer boardId) throws Exception {
+	@PutMapping("/boards/{boardId}")
+	public ResponseEntity<Boolean> updateBoard(@PathVariable("boardId") Integer boardId, @RequestBody Board board, HttpServletRequest request) {
 		try {
-			if(boardId==null) {
-				throw new Exception("요청된 정보가 없습니다.");
-			}
-			boolean fileResult = fileService.deleteFileInfo(boardId);
-			if(!fileResult) {
-				throw new Exception("File Service 에러");
-			}
-			boolean boardResult = boardService.deleteHardBoardInfo(boardId);
-			if(!boardResult) {
-				throw new Exception("Board Service 에러");
-			}
-			return true;
-		}
-		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
-		}
-    }
-	
-	@GetMapping("/modify/{boardId}")
-	public String goModify(@PathVariable("boardId") Integer boardId, HttpServletRequest request, Model model) throws Exception{
-		try {
-			if(boardId==null) {
-				throw new Exception("요청된 정보가 없습니다.");
-			}
-			
-			HashMap<String,Object> boardInfo = boardService.getBoardDetailInfo(boardId);
-			if(boardInfo==null) {
-				throw new Exception("Board Service 에러");
-			}
-			String boardUserId = String.valueOf(boardInfo.get("userId"));
-			
-			HttpSession session = request.getSession(false);
-			String sessionUserId = String.valueOf(session.getAttribute("userId"));
-			
-			if(!boardUserId.equals(sessionUserId)) {
-				throw new Exception("게시물 작성자가 아닙니다.");
-			}
-			
-			model.addAttribute("boardData", boardInfo);
-			model.addAttribute("commentsData", null);
-			
-			// 파일정보 가져오기
-			FileDTO[] filesInfo = fileService.getFileInfo(boardId);
-			if(filesInfo!=null) {
-				model.addAttribute("filesData",filesInfo);
-			}
-			
-			return "/board/board";
-		}
-		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return "redirect:/";
-		}
-	}
-	
-	@PutMapping("/modify/{boardId}")
-	@ResponseBody
-	public boolean updateBoard(@PathVariable("boardId") Integer boardId, @RequestBody Board board) {
-		try {
+	 		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null || board==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
@@ -229,11 +174,12 @@ public class BoardController {
 			if(!result) {
 				throw new Exception("Board Service 에러");
 			}
-			return true;
+	 		log.info("update board "+boardId);
+			return ResponseEntity.ok().body(true);
 		}
 		catch(Exception e) {
-			System.out.println(e.getMessage());
-			return false;
+	 		log.error(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
 		}
 	}
 	
