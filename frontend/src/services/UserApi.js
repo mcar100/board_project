@@ -1,20 +1,36 @@
 import { convertFormToObject, changeObjectKeyName } from "../utils/convertor";
+import { removeCookie, setCookie } from "../utils/cookies";
 import callAxios from "./axios";
 
 export const login = async (formRef) => {
   const formData = convertFormToObject(formRef.current);
   changeObjectKeyName(formData, "g-recaptcha-response", "recaptcha"); // ['g-recaptcha-response'] -> ['recaptcha']
 
-  const response = await callAxios.post("/auth/login", formData);
-  if (response.status === 200) {
-    return { message: response.data, url: "/" };
+  try {
+    const response = await callAxios.post("/auth/login", formData);
+
+    if (formData.emailCheck === "true") {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + 7);
+      setCookie("email", formData.email, { path: "/login", expires });
+    } else {
+      removeCookie("email", { path: "/login" });
+    }
+
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 30);
+    setCookie("userId", response.data.userId, { path: "/", expires });
+
+    return { success: true, message: response.data.message, url: "/" };
+  } catch (thrown) {
+    return { success: false, message: thrown.response.data.message };
   }
-  return null;
 };
 
 export const logout = async () => {
   const response = await callAxios.get("/auth/logout");
   if (response.status === 200) {
+    removeCookie("userId", { path: "/" });
     return { message: response.data, url: "/login" };
   }
 };

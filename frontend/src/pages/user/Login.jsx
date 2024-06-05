@@ -18,13 +18,14 @@ function Login() {
       const [isCheck, checkMsg, invalidTarget] = checkFormInfoBlank(
         formRef.current
       );
+
       if (!isCheck) {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
 
       const result = await login(formRef);
-      if (result) {
-        alert(result.message);
+      alert(result.message);
+      if (result.success) {
         navigate(result.url);
       }
     } catch (thrown) {

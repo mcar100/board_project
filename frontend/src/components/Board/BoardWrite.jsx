@@ -17,14 +17,6 @@ function BoardWrite({ boardId, boardData, fileDataList, setPageType }) {
   });
   const navigate = useNavigate();
 
-  const handleModifySubmit = (e) => {
-    e.preventDefault();
-    if (!confirm("수정하시겠습니까?")) return;
-
-    if (boardData) {
-      setPageType(DETAIL);
-    }
-  };
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     if (!confirm(boardData ? "수정하시겠습니까?" : "작성하시겠습니까?")) return;

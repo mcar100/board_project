@@ -4,6 +4,7 @@ import { ContentLayout } from "./components/Layout/ContentLayout";
 import Login from "./pages/user/Login";
 import Membership from "./pages/user/Membership";
 import Board from "./pages/board/Board";
+import Profile from "./pages/user/Profile";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/boards" element={<Board />} />
           <Route path="/boards/:id" element={<Board />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/membership" element={<Membership />} />

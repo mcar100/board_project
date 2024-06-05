@@ -6,10 +6,17 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext } from "react";
 import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
 function CustomNavbar() {
   const user = useContext(UserContext);
+  const navigate = useNavigate();
+  const handleNavClick = (e, url) => {
+    e.preventDefault();
+    navigate(url);
+  };
+
   return (
     <Navbar
       expand="lg"
@@ -49,7 +56,11 @@ function CustomNavbar() {
                 className="dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown"
               >
-                <Dropdown.Item href="/profile">
+                <Dropdown.Item
+                  onClick={(e) => {
+                    handleNavClick(e, "/profile");
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={faUser}
                     size="sm"
@@ -59,7 +70,13 @@ function CustomNavbar() {
                   Profile
                 </Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item data-toggle="modal" data-target="#customModal">
+                <Dropdown.Item
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (!confirm("로그아웃 하시겠습니까?")) return;
+                    navigate("/login");
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={faSignOutAlt}
                     size="sm"

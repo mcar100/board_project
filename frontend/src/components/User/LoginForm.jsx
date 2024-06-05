@@ -1,6 +1,6 @@
 import * as Form from "../../components/Form/Form";
-import cookies from "react-cookies";
 import ReCAPTCHA from "react-google-recaptcha";
+import { getCookie } from "../../utils/cookies";
 
 function CookieFormInput({
   type,
@@ -10,7 +10,7 @@ function CookieFormInput({
   cookieId,
   ...otherProps
 }) {
-  const cookieValue = cookies.load(cookieId);
+  const cookieValue = getCookie(cookieId);
   return (
     <Form.Input
       type={type}
@@ -24,7 +24,7 @@ function CookieFormInput({
 }
 
 function CookieFormCheckBox({ name, className, text, cookieId }) {
-  const isCookie = cookies.load(cookieId) ? true : false;
+  const isCookie = getCookie(cookieId) ? true : false;
   return (
     <Form.CheckBox
       name={name}
