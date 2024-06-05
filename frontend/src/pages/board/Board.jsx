@@ -17,11 +17,10 @@ function Board() {
     content: "내용",
   });
   const [fileDataList, setFileDataList] = useState([]);
-  const [commentDataList, setCommentDataList] = useState([]);
 
   if (pageType !== WRITE) {
     useEffect(() => {
-      async function load() {
+      const load = async () => {
         const result = await getBoardData(boardId);
         if (result) {
           const boardInfo = result.boardInfo;
@@ -35,10 +34,7 @@ function Board() {
         if (result && result.filesInfo.length > 0) {
           setFileDataList(result.filesInfo);
         }
-        if (pageType === DETAIL && result && result.commentsInfo.length > 0) {
-          setCommentDataList(result.commentsInfo);
-        }
-      }
+      };
       load();
     }, []);
   }
@@ -50,7 +46,6 @@ function Board() {
           boardId={boardId}
           boardData={boardData}
           fileDataList={fileDataList}
-          commentDataList={commentDataList}
           setPageType={setPageType}
         />
       )}

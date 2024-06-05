@@ -18,7 +18,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function load() {
+    const load = async () => {
       const result = await getBoardList(pageInfo.pageNo);
       if (result) {
         setTableList(result.boardList);
@@ -29,7 +29,7 @@ function Home() {
           pageSize: result.pageSize,
         }));
       }
-    }
+    };
     load();
   }, [pageInfo.pageNo]);
 

@@ -7,13 +7,7 @@ import CommentDetail from "./Comment/CommentDetail";
 import { MODIFY } from "../../utils/constants";
 import { deleteBoard } from "../../services/BoardApi";
 
-function BoardDetail({
-  boardId,
-  boardData,
-  fileDataList,
-  commentDataList,
-  setPageType,
-}) {
+function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
   const userContext = useContext(UserContext);
   const username = userContext.userInfo ? userContext.userInfo.name : "";
   const navigate = useNavigate();
@@ -59,11 +53,10 @@ function BoardDetail({
         <pre>{boardData.content}</pre>
       </Card.Body>
       <FileDetail fileList={fileDataList} />
-      {commentDataList.length > 0 && (
-        <Card.Footer>
-          <CommentDetail commentList={commentDataList} />
-        </Card.Footer>
-      )}
+
+      <Card.Footer>
+        <CommentDetail boardId={boardId} />
+      </Card.Footer>
     </Card>
   );
 }

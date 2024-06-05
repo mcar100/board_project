@@ -91,7 +91,6 @@ function FormTextarea({
   const [inputValue, setInputValue] = useState("");
   const handleChangeInput = (e) => {
     setInputValue(e.target.value);
-    return;
   };
 
   useEffect(() => {
