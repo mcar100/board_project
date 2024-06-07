@@ -37,8 +37,8 @@ public class FileController {
 	
 	@PostMapping("files/{boardId}")
 	public ResponseEntity<Boolean> uploadFile(@PathVariable("boardId") Integer boardId, @RequestPart("formData") MultipartFile[] files, HttpServletRequest request) throws Exception {
+		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 		try {
-			log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null||files==null) {
 				throw new Exception("요청된 파일 정보가 없습니다.");
 			}
@@ -67,8 +67,8 @@ public class FileController {
 	
 	@DeleteMapping("files/{boardId}")
 	public ResponseEntity<Boolean> deleteFile(@PathVariable("boardId") Integer boardId, @RequestBody FileIdRequest fileIdRequest, HttpServletRequest request) throws Exception {
+		log.info(request.getMethod()+" "+request.getRequestURI()+"");
 		try {
-			log.info(request.getMethod()+" "+request.getRequestURI()+"");
 			if(boardId==null||fileIdRequest==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
@@ -78,7 +78,6 @@ public class FileController {
 			if(!result) {
 				throw new Exception("Board Service 에러");
 			}
-			
 			return ResponseEntity.ok().body(true);
 		}
 		catch(Exception e) {
@@ -89,8 +88,8 @@ public class FileController {
 	
 	@GetMapping("files")
 	public ResponseEntity<UrlResource> downloadFile(@RequestParam("uploadedName") String uploadedName, @RequestParam("originalName") String originalName, HttpServletRequest request ) throws Exception{
+		log.info(request.getMethod()+" "+request.getRequestURI()+" originalName:"+originalName);
 		try {
-			log.info(request.getMethod()+" "+request.getRequestURI()+" originalName:"+originalName);
 			if(uploadedName==null||originalName==null) {
 				throw new Exception("요청된 정보가 없습니다.");
 			}
@@ -98,13 +97,13 @@ public class FileController {
 			UrlResource resource = new UrlResource("file:"+uploadPath+uploadedName);
 			String encodedName = UriUtils.encode(originalName, StandardCharsets.UTF_8);
 			String contentDisposition = "attachment;filename=\""+encodedName+"\"";
-			System.out.println(contentDisposition);
+
 			return ResponseEntity.ok()
 						.header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
 						.body(resource);
 		}
 		catch(Exception err) {
-			log.error("다운로드 실패 "+err.getMessage());
+			log.error("file download failed "+err.getMessage());
 			return null;
 		}
 	}

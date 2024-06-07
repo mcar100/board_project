@@ -21,11 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.board.model.Board;
 import com.example.demo.board.model.BoardDetailResponse;
 import com.example.demo.board.model.BoardListResponse;
-import com.example.demo.board.model.Comment;
 import com.example.demo.board.model.FileDTO;
 import com.example.demo.board.model.SearchDTO;
 import com.example.demo.board.service.BoardService;
-import com.example.demo.board.service.CommentService;
 import com.example.demo.board.service.FileService;
 import com.example.demo.util.PaginationHelper;
 
@@ -39,8 +37,6 @@ public class BoardController {
 	BoardService boardService;
 	@Autowired
 	FileService fileService;
-	@Autowired
-	CommentService commentService;
 	
     @GetMapping("/boards")
     public ResponseEntity<BoardListResponse> getBoardList(@RequestParam(value="pageNo", required = true, defaultValue="1") int pageNo, HttpServletRequest request) throws Exception {
@@ -127,11 +123,6 @@ public class BoardController {
 				boardDetailResponse.setFilesInfo(filesInfo);
 			}
 			
-			// 댓글정보 가져오기
-			ArrayList<Comment> commentsInfo = commentService.getCommentList(boardId);
-			if(commentsInfo!=null) {
-				boardDetailResponse.setCommentsInfo(commentsInfo);
-			}
 			log.info("get board details: "+boardId);
 			return ResponseEntity.ok().body(boardDetailResponse);
 		}

@@ -1,6 +1,5 @@
 package com.example.demo.user.controller;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.config.RecaptchaConfig;
 import com.example.demo.user.model.LoginFormat;
+import com.example.demo.user.model.LoginResponse;
 import com.example.demo.user.model.User;
 import com.example.demo.user.service.UserService;
-import com.example.demo.util.CookieHelper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +31,7 @@ public class LoginController {
 	private String secretKey;
     
     @PostMapping("/auth/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponse> login(
     		@RequestBody LoginFormat loginFormat, HttpServletRequest request, HttpServletResponse response) throws Exception {    	
     	try {
     		log.info(request.getMethod()+" "+request.getRequestURI()+"");
@@ -60,37 +59,22 @@ public class LoginController {
     		session.setAttribute("userId",user.getId());
     		session.setAttribute("username",user.getName());
     		session.setMaxInactiveInterval(1800*30);
-
-    		if(loginFormat.getEmailCheck().equals("true")) {
-    			Cookie emailCookie = CookieHelper.create("email",String.valueOf(loginFormat.getEmail()),"/login",3600*24*7);
-    			response.addCookie(emailCookie);
-    		}
-    		else {
-    			CookieHelper.remove(response, "email","/login");
-    		}
-    		
-    		Cookie idCookie = CookieHelper.create("userId",String.valueOf(user.getId()),"/",1800);
-    		response.addCookie(idCookie);
     		
     		log.info(loginFormat.getEmail()+" login");
-    		return ResponseEntity.ok().body("로그인되었습니다.");
+    		return ResponseEntity.ok().body(new LoginResponse(user.getId(),"로그인되었습니다."));
 		} catch (Exception e) {
 			log.error(e.getMessage()+"");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse(null, e.getMessage()));
 		}
 	}
  
-    @GetMapping("/auth/logout")
+	@GetMapping("/auth/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
     	log.info(request.getMethod()+" "+request.getRequestURI()+"");
     	HttpSession session = request.getSession(false);
     	if(session != null) {
     		session.invalidate();
     	}
-    	
-    	Cookie idCookie = new Cookie("userId",null);
-    	idCookie.setMaxAge(0);
-    	response.addCookie(idCookie);
 		log.info(session.getId()+" logout");
     	return ResponseEntity.ok().body("로그아웃되었습니다.");
     }
