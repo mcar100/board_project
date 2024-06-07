@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 import { getComments } from "../../../services/commentApi";
 import { thrownHandler } from "../../../utils/ValidatorAlert";
+import { UserContext } from "../../../context/UserContext";
 
-function CommentDetail({ boardId }) {
+function CommentDetail({ boardId, writer }) {
   const [commentList, setCommentlist] = useState([]);
+  const userContext = useContext(UserContext);
+  const { isLogin, userInfo } = userContext;
+  const isWriter = userInfo && userInfo.name === writer;
 
   const nameTable = {};
   commentList.forEach((el) => {
@@ -30,6 +34,8 @@ function CommentDetail({ boardId }) {
       <ul style={{ maxHeight: 500, overflowY: "scroll", overflowX: "hidden" }}>
         {commentList.map((comment) => (
           <CommentItem
+            isWriter={isWriter}
+            user={userInfo}
             key={`comment-${comment.id}`}
             comment={comment}
             parentName={nameTable[comment.parentId]}
@@ -37,8 +43,7 @@ function CommentDetail({ boardId }) {
           />
         ))}
       </ul>
-
-      <CommentInput callback={load} />
+      {isLogin && <CommentInput callback={load} />}
     </>
   );
 }

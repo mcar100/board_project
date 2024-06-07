@@ -55,7 +55,7 @@ function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
       <FileDetail fileList={fileDataList} />
 
       <Card.Footer>
-        <CommentDetail boardId={boardId} />
+        <CommentDetail boardId={boardId} writer={boardData.writer} />
       </Card.Footer>
     </Card>
   );

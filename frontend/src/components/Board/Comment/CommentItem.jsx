@@ -1,23 +1,40 @@
 import { useState } from "react";
 import { CommentBtnHead, CommentContentHead } from "./CommentHead";
 import CommentInput from "./CommentInput";
-import { MODIFY, READ, REPLY } from "../../../utils/constants";
+import {
+  MODIFY,
+  READ,
+  REPLY,
+  USER_COMMETER,
+  USER_NORMAL,
+  USER_WRITER,
+} from "../../../utils/constants";
 
-function CommentItem({ comment, parentName, load }) {
+function CommentItem({ isWriter, user = null, comment, parentName, load }) {
   const [commentType, setCommentType] = useState(READ);
   const paddingDepth = comment.depth * 20;
+  const userType =
+    user && comment.userName === user.name
+      ? USER_COMMETER
+      : isWriter
+      ? USER_WRITER
+      : USER_NORMAL;
+
   return (
     <li style={{ paddingLeft: paddingDepth, position: "relative" }}>
       {paddingDepth > 0 && <CommentReplyMark />}
       <div className="commentDiv" style={{ paddingLeft: "2rem" }}>
         <div className="commentHead">
           <CommentContentHead comment={comment} />
-          <CommentBtnHead
-            commentType={commentType}
-            setCommentType={setCommentType}
-            deleteInfo={{ id: comment.id }}
-            callback={load}
-          />
+          {user && (
+            <CommentBtnHead
+              userType={userType}
+              commentType={commentType}
+              setCommentType={setCommentType}
+              deleteInfo={{ id: comment.id }}
+              callback={load}
+            />
+          )}
         </div>
         {commentType !== MODIFY ? (
           <div className="comment flex">

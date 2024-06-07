@@ -1,6 +1,12 @@
 import { deleteComment } from "../../../services/commentApi";
 import { thrownHandler } from "../../../utils/ValidatorAlert";
-import { MODIFY, READ, REPLY } from "../../../utils/constants";
+import {
+  MODIFY,
+  READ,
+  REPLY,
+  USER_COMMETER,
+  USER_NORMAL,
+} from "../../../utils/constants";
 
 const CommentContentHead = ({ comment }) => {
   return (
@@ -13,6 +19,7 @@ const CommentContentHead = ({ comment }) => {
 };
 
 function CommentBtnHead({
+  userType,
   commentType,
   setCommentType,
   deleteInfo = null,
@@ -52,7 +59,12 @@ function CommentBtnHead({
         </div>
       )}
       {commentType !== MODIFY ? (
-        <div className="commentModify" onClick={handleModifyBtn}>
+        <div
+          className={
+            userType === USER_COMMETER ? "commentModify" : "visually-hidden"
+          }
+          onClick={handleModifyBtn}
+        >
           수정
         </div>
       ) : (
@@ -60,7 +72,12 @@ function CommentBtnHead({
           취소
         </div>
       )}
-      <div className="commentRemove" onClick={handleRemoveBtn}>
+      <div
+        className={
+          userType !== USER_NORMAL ? "commentRemove" : "visually-hidden"
+        }
+        onClick={handleRemoveBtn}
+      >
         삭제
       </div>
     </div>

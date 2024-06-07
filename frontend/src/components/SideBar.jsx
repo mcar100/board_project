@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../services/UserApi";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { Link } from "./Form/Form";
 
 function Sidebar() {
   const user = useContext(UserContext);
@@ -97,7 +98,12 @@ function Sidebar() {
         </Nav>
 
         <li className="nav-item active">
-          <a className="nav-link" href="/">
+          <a
+            className="nav-link"
+            onClick={(e) => {
+              handleLinkClick(e, "/");
+            }}
+          >
             <FontAwesomeIcon fixedWidth icon={faTable}></FontAwesomeIcon>
             <span>Tables</span>
           </a>
