@@ -1,11 +1,22 @@
 import { useRef } from "react";
-import { createComment } from "../../../services/commentApi";
+import { useParams } from "react-router-dom";
+import * as Form from "../../Form/Form";
+import { createComment, updateComment } from "../../../services/commentApi";
+import { READ } from "../../../utils/constants";
 import { checkFormInfoBlank } from "../../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../../utils/ValidatorAlert";
-import * as Form from "../../Form/Form";
 
-function CommentInput({ boardId, load, parentData = null, defaultValue }) {
+function CommentInput({
+  callback,
+  small,
+  updateInfo = null,
+  parentInfo = null,
+  setCommentType = null,
+}) {
   const formRef = useRef(null);
+  const params = useParams();
+  const boardId = params.id;
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -16,9 +27,17 @@ function CommentInput({ boardId, load, parentData = null, defaultValue }) {
         throw new ValidatorAlert(checkMsg, invalidTarget);
       }
 
-      const result = await createComment(formRef, boardId, parentData);
+      let result = null;
+      if (!updateInfo) {
+        result = await createComment(formRef, boardId);
+      } else {
+        result = await updateComment(formRef, updateInfo.id);
+      }
       if (result) {
-        load();
+        callback();
+      }
+      if (setCommentType) {
+        setCommentType(READ);
       }
     } catch (thrown) {
       thrownHandler(thrown);
@@ -31,13 +50,27 @@ function CommentInput({ boardId, load, parentData = null, defaultValue }) {
       className="flex py-2 px-2"
       onSubmit={handleFormSubmit}
     >
-      {" "}
+      {parentInfo && (
+        <>
+          <Form.Input
+            name={"parentId"}
+            value={parentInfo.id}
+            className="visually-hidden"
+          />
+          <Form.Input
+            name={"depth"}
+            value={parentInfo.depth + 1}
+            className="visually-hidden"
+          />
+        </>
+      )}
       <Form.Textarea
+        style={{ width: small ? "80%" : "100%" }}
         name="content"
         className="h-100 mr-2"
         data-title="댓글"
         placeholder="댓글"
-        defaultValue={defaultValue}
+        defaultValue={updateInfo && updateInfo.defaultValue}
         cols={30}
       />
       <div style={{ width: "10%" }}>

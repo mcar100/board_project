@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import * as Form from "../Form/Form";
+import FileWrite from "./File/FileWrite";
 import { updateBoard, writeBoard } from "../../services/BoardApi";
 import { updateFile } from "../../services/FileApi";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
-import * as Form from "../Form/Form";
-import FileWrite from "./File/FileWrite";
 
 function BoardWrite({ boardId, boardData, fileDataList }) {
   const formRef = useRef(null);

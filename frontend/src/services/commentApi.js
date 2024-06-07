@@ -9,17 +9,33 @@ export const getComments = async (boardId) => {
   return response.data;
 };
 
-export const createComment = async (formRef, boardId, pData = null) => {
+export const createComment = async (formRef, boardId) => {
   const formData = convertFormToObject(formRef.current);
+  console.log(formData);
   const response = await callAxios.post(`/comments`, {
     ...formData,
     boardId,
-    parentId: pData ? pData.id : null,
-    depth: pData ? pData.depth + 1 : 0,
   });
 
   if (!response.data) {
     throw new Error("댓글 등록 실패");
+  }
+  return response.data;
+};
+
+export const updateComment = async (formRef, commentId) => {
+  const formData = convertFormToObject(formRef.current);
+  const response = await callAxios.put(`/comments/${commentId}`, formData);
+  if (!response.data) {
+    throw new Error("댓글 수정 실패");
+  }
+  return response.data;
+};
+
+export const deleteComment = async (commentId) => {
+  const response = await callAxios.delete(`/comments/${commentId}`);
+  if (!response.data) {
+    throw new Error("댓글 삭제 실패");
   }
   return response.data;
 };

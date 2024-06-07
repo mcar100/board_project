@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import BoardDetail from "../../components/Board/BoardDetail";
 import BoardWrite from "../../components/Board/BoardWrite";
 import { getBoardData } from "../../services/BoardApi";
-import { DETAIL, WRITE, MODIFY } from "../../utils/constants";
+import { READ, WRITE, MODIFY } from "../../utils/constants";
 
 function Board() {
   const params = useParams();
   const boardId = params.id;
   const [pageType, setPageType] = useState(() => {
-    return boardId ? DETAIL : WRITE;
+    return boardId ? READ : WRITE;
   });
   const [boardData, setBoardData] = useState({
     title: "제목",
@@ -41,7 +41,7 @@ function Board() {
 
   return (
     <>
-      {pageType === DETAIL && (
+      {pageType === READ && (
         <BoardDetail
           boardId={boardId}
           boardData={boardData}

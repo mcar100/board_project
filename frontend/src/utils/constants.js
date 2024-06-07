@@ -44,7 +44,8 @@ export const FILE_MAX_COUNT = 3;
 export const FILENAME_MAX_LENGTH = 20;
 export const FILE_HEAD_LIMIT = 8;
 
-// boards
-export const DETAIL = 1;
+// boards, comments mode
+export const READ = 1;
 export const WRITE = 2;
 export const MODIFY = 3;
+export const REPLY = 4;
