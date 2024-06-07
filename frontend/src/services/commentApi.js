@@ -11,7 +11,6 @@ export const getComments = async (boardId) => {
 
 export const createComment = async (formRef, boardId) => {
   const formData = convertFormToObject(formRef.current);
-  console.log(formData);
   const response = await callAxios.post(`/comments`, {
     ...formData,
     boardId,

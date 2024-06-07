@@ -10,7 +10,6 @@ export const getFile = async (oname, uname) => {
     if (response.status === 200) {
       downloadFile(response);
     }
-    console.log(response);
   } catch (thrown) {
     console.log(thrown);
     return null;
@@ -47,7 +46,6 @@ export const updateFile = async (fileRef, boardId) => {
     if (requestTwo && responseTwo.status !== 200) {
       throw new Error("파일 삭제 실패");
     }
-    console.log(requestOne, requestTwo, responseOne, responseTwo);
     return { success: true, message: "파일 등록에 성공했습니다." };
   } catch (thrown) {
     console.log(thrown);
