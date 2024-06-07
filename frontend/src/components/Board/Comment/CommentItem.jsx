@@ -4,18 +4,23 @@ import CommentInput from "./CommentInput";
 import {
   MODIFY,
   READ,
+  REMOVED,
   REPLY,
-  USER_COMMETER,
+  USER_COMMENTER,
   USER_NORMAL,
   USER_WRITER,
 } from "../../../utils/constants";
 
 function CommentItem({ isWriter, user = null, comment, parentName, load }) {
-  const [commentType, setCommentType] = useState(READ);
+  const [content, setContent] = useState(comment.content);
+  const [commentType, setCommentType] = useState(() => {
+    if (comment.status !== "PUBLIC") return REMOVED;
+    return READ;
+  });
   const paddingDepth = comment.depth * 20;
   const userType =
     user && comment.userName === user.name
-      ? USER_COMMETER
+      ? USER_COMMENTER
       : isWriter
       ? USER_WRITER
       : USER_NORMAL;
@@ -41,8 +46,8 @@ function CommentItem({ isWriter, user = null, comment, parentName, load }) {
             {comment.parentId && (
               <span className="mr-2 text-primary">@{parentName}</span>
             )}
-            {comment.status === "PUBLIC" ? (
-              <pre>{comment.content}</pre>
+            {commentType !== REMOVED ? (
+              <pre>{content}</pre>
             ) : (
               <p>삭제된 댓글입니다.</p>
             )}
@@ -53,8 +58,9 @@ function CommentItem({ isWriter, user = null, comment, parentName, load }) {
             small
             updateInfo={{
               id: comment.id,
-              defaultValue: comment.content,
+              defaultValue: content,
             }}
+            setContent={setContent}
             setCommentType={setCommentType}
           />
         )}

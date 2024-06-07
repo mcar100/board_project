@@ -3,8 +3,9 @@ import { thrownHandler } from "../../../utils/ValidatorAlert";
 import {
   MODIFY,
   READ,
+  REMOVED,
   REPLY,
-  USER_COMMETER,
+  USER_COMMENTER,
   USER_NORMAL,
 } from "../../../utils/constants";
 
@@ -23,7 +24,6 @@ function CommentBtnHead({
   commentType,
   setCommentType,
   deleteInfo = null,
-  callback,
 }) {
   const handleReplyBtn = () => {
     setCommentType(() => REPLY);
@@ -40,7 +40,7 @@ function CommentBtnHead({
     try {
       const result = await deleteComment(deleteInfo.id);
       if (result) {
-        callback();
+        setCommentType(() => REMOVED);
       }
     } catch (thrown) {
       thrownHandler(thrown);
@@ -61,7 +61,9 @@ function CommentBtnHead({
       {commentType !== MODIFY ? (
         <div
           className={
-            userType === USER_COMMETER ? "commentModify" : "visually-hidden"
+            userType === USER_COMMENTER && commentType !== REMOVED
+              ? "commentModify"
+              : "visually-hidden"
           }
           onClick={handleModifyBtn}
         >
@@ -72,14 +74,11 @@ function CommentBtnHead({
           취소
         </div>
       )}
-      <div
-        className={
-          userType !== USER_NORMAL ? "commentRemove" : "visually-hidden"
-        }
-        onClick={handleRemoveBtn}
-      >
-        삭제
-      </div>
+      {userType !== USER_NORMAL && commentType !== REMOVED && (
+        <div className={"commentRemove"} onClick={handleRemoveBtn}>
+          삭제
+        </div>
+      )}
     </div>
   );
 }

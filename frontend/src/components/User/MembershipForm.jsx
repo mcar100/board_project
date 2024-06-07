@@ -90,6 +90,7 @@ function EmailForm() {
       setEmail("");
       setIsVerify(false);
       thrownHandler(thrown);
+      emailRef.current.focus();
     }
   };
   return (

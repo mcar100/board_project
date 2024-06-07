@@ -86,12 +86,20 @@ function FormTextarea({
   name,
   placeholder,
   defaultValue,
+  submitDetected,
+  setSubmitDetected,
   ...otherProps
 }) {
   const [inputValue, setInputValue] = useState("");
   const handleChangeInput = (e) => {
     setInputValue(e.target.value);
   };
+  useEffect(() => {
+    if (submitDetected) {
+      setInputValue("");
+      setSubmitDetected(false);
+    }
+  }, [submitDetected]);
 
   useEffect(() => {
     if (!defaultValue) return;

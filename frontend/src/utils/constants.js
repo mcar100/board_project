@@ -45,6 +45,7 @@ export const FILENAME_MAX_LENGTH = 20;
 export const FILE_HEAD_LIMIT = 8;
 
 // boards, comments mode
+export const REMOVED = 0;
 export const READ = 1;
 export const WRITE = 2;
 export const MODIFY = 3;
@@ -52,5 +53,5 @@ export const REPLY = 4;
 
 // comment user type
 export const USER_NORMAL = 1;
-export const USER_COMMETER = 2;
+export const USER_COMMENTER = 2;
 export const USER_WRITER = 3;

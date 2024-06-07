@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as Form from "../../Form/Form";
 import { createComment, updateComment } from "../../../services/commentApi";
@@ -11,8 +11,10 @@ function CommentInput({
   small,
   updateInfo = null,
   parentInfo = null,
-  setCommentType = null,
+  setContent,
+  setCommentType,
 }) {
+  const [submitDetected, setSubmitDetected] = useState(false);
   const formRef = useRef(null);
   const params = useParams();
   const boardId = params.id;
@@ -33,12 +35,19 @@ function CommentInput({
       } else {
         result = await updateComment(formRef, updateInfo.id);
       }
-      if (result) {
-        callback();
-      }
+
+      if (!result) return;
+
       if (setCommentType) {
         setCommentType(READ);
       }
+
+      if (setContent) {
+        setContent(() => formRef.current[0].value);
+      } else {
+        callback();
+      }
+      setSubmitDetected(true);
     } catch (thrown) {
       thrownHandler(thrown);
     }
@@ -71,6 +80,8 @@ function CommentInput({
         data-title="댓글"
         placeholder="댓글"
         defaultValue={updateInfo && updateInfo.defaultValue}
+        submitDetected={submitDetected}
+        setSubmitDetected={setSubmitDetected}
         cols={30}
       />
       <div style={{ width: "10%" }}>

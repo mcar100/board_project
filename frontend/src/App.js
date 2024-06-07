@@ -5,6 +5,7 @@ import Login from "./pages/user/Login";
 import Membership from "./pages/user/Membership";
 import Board from "./pages/board/Board";
 import Profile from "./pages/user/Profile";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/membership" element={<Membership />} />
+        <Route path="/*" element={<NotFound />} />
       </Routes>
     </div>
   );
