@@ -4,7 +4,7 @@ import {
   FILE_HEAD_LIMIT as fHeadLimit,
 } from "./constants";
 
-function downloadFile(response) {
+const downloadFile = (response) => {
   const blob = new Blob([response.data]);
   const fileObjectUrl = window.URL.createObjectURL(blob);
 
@@ -18,9 +18,9 @@ function downloadFile(response) {
   link.remove();
 
   window.URL.revokeObjectURL(fileObjectUrl);
-}
+};
 
-function _extractDownloadFilename(response) {
+const _extractDownloadFilename = (response) => {
   const disposition = response.headers["content-disposition"];
   if (!disposition) return response.config.params.originalName;
   const fname = decodeURI(
@@ -29,9 +29,9 @@ function _extractDownloadFilename(response) {
       .replace(/['"]/g, "")
   );
   return fname;
-}
+};
 
-function addFile(target, setFileList, totalfCount) {
+const addFile = (target, setFileList, totalfCount) => {
   const inputfCount = target.files.length;
   if (totalfCount >= fMaxCount) {
     throw new Error(`파일은 최대 ${fMaxCount}개까지만 등록 가능합니다.`);
@@ -47,9 +47,9 @@ function addFile(target, setFileList, totalfCount) {
     }
     return fList;
   });
-}
+};
 
-function processFileName(fullName) {
+const processFileName = (fullName) => {
   const fullNameArray = fullName.split(".");
   const ext = fullNameArray.pop();
   const fName = fullNameArray.join("");
@@ -65,6 +65,6 @@ function processFileName(fullName) {
     );
   }
   return fName + "." + ext;
-}
+};
 
 export { downloadFile, addFile, processFileName };
