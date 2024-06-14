@@ -23,6 +23,8 @@ const getPathNameNumber = () => {
   return window.location.pathname.split("/").pop();
 };
 
+const padNumber = (number, length = 2) => String(number).padStart(length, "0");
+
 const convertSecondToTimerFormat = (timer) => {
   if (timer < 60) {
     return [0, timer];
@@ -37,7 +39,8 @@ const convertSecondToTimerFormat = (timer) => {
 export {
   convertFormToObject,
   convertStringToBytes,
-  getPathNameNumber,
   changeObjectKeyName,
+  getPathNameNumber,
+  padNumber,
   convertSecondToTimerFormat,
 };
