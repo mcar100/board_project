@@ -1,7 +1,7 @@
 import useTimer from "../../hooks/useTimer";
 import { padNumber } from "../../utils/convertor";
 
-function Timer({ time = 10 }) {
+function Timer({ time = 300 }) {
   const { minute, second } = useTimer(time);
 
   return (

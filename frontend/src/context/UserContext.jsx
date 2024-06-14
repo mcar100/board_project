@@ -32,6 +32,5 @@ export function UserProvider({ children }) {
     }
     updateUser();
   }, []);
-
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 }
