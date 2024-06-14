@@ -11,9 +11,10 @@ import {
   checkEmailVerification,
   sendEmailVerification,
 } from "../../services/UserApi";
+import { useCheck } from "../../hooks/useInput";
 
 function NameForm() {
-  const [isCheck, setIsCheck] = useState();
+  const { isChecked, checkOn, checkOff } = useCheck();
   const [spanMsg, setSpanMsg] = useState("");
   const nameRef = useRef(null);
   const handleBlur = async () => {
@@ -26,11 +27,11 @@ function NameForm() {
 
       const result = await checkDuplicate(nameRef);
       if (result) {
-        setIsCheck(true);
+        checkOn();
         setSpanMsg(result.message);
       }
     } catch (thrown) {
-      setIsCheck(false);
+      checkOff();
       if (thrown instanceof AxiosError) {
         if (thrown.code === "ERR_NETWORK") {
           setSpanMsg("서버 에러");
@@ -50,16 +51,18 @@ function NameForm() {
         <Form.Input
           inputRef={nameRef}
           name="name"
-          className={isCheck && "form-clear"}
+          className={isChecked && "form-clear"}
           placeholder="이름"
           title="한글+특수문자 불가, 10자 이하"
           data-title="이름"
-          data-valid={isCheck}
+          data-valid={isChecked}
           maxLength="10"
           onBlur={handleBlur}
         />
         {spanMsg && (
-          <Form.Text className={isCheck ? "form-msg-clear" : "form-msg-error"}>
+          <Form.Text
+            className={isChecked ? "form-msg-clear" : "form-msg-error"}
+          >
             {spanMsg}
           </Form.Text>
         )}
@@ -198,7 +201,7 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
 }
 
 function PasswordForm() {
-  const [isCheck, setIsCheck] = useState(false);
+  const { isChecked, checkOn, checkOff } = useCheck(false);
   const [passwordForm, setPasswordForm] = useState({
     password: "",
     passwordCheck: "",
@@ -232,16 +235,16 @@ function PasswordForm() {
     const [isValid, validateMsg] = validator(target);
 
     if (!isValid) {
-      setIsCheck(false);
+      checkOff();
       throw new ValidatorAlert(validateMsg, target);
     } else {
-      setIsCheck(true);
+      checkOn();
       throw new ValidatorAlert(validateMsg);
     }
   };
 
   const checkPasswordConfirm = (target) => {
-    if (!isCheck) {
+    if (!isChecked) {
       throw new ValidatorAlert(
         "먼저 사용 가능한 비밀번호를 입력하세요.",
         passwordRef.current
@@ -256,13 +259,13 @@ function PasswordForm() {
   };
 
   useEffect(() => {
-    if (isCheck && passwordForm.password === passwordForm.passwordCheck) {
+    if (isChecked && passwordForm.password === passwordForm.passwordCheck) {
       setPasswordForm((prev) => ({
         ...prev,
         ["passwordCheck"]: "",
       }));
     }
-  }, [isCheck]);
+  }, [isChecked]);
 
   const isPasswordCheck =
     passwordForm.password &&
@@ -304,7 +307,7 @@ function PasswordForm() {
 
 function PhoneForm() {
   const [phone, setPhone] = useState("");
-  const [isCheck, setIsCheck] = useState(false);
+  const { isChecked, checkOff, checkOn } = useCheck(false);
   const phoneRef = useRef(null);
   const handleBlur = (e) => {
     if (!isNotBlank(e.target.value)) {
@@ -317,10 +320,10 @@ function PhoneForm() {
       setPhone(e.target.value);
       const [isValid, validateMsg] = validator(e.target);
       if (!isValid) {
-        setIsCheck(false);
+        checkOff();
         throw new ValidatorAlert(validateMsg, e.target);
       } else {
-        setIsCheck(true);
+        checkOn();
         throw new ValidatorAlert(validateMsg);
       }
     } catch (thrown) {
@@ -332,7 +335,7 @@ function PhoneForm() {
       inputRef={phoneRef}
       type="tel"
       name="phone"
-      className={isCheck && "form-clear"}
+      className={isChecked && "form-clear"}
       data-title="휴대폰번호"
       placeholder="휴대폰번호"
       maxLength="13"
@@ -347,20 +350,20 @@ function AddressForm() {
     details: "",
     zipCode: "",
   });
-  const [isOpen, setIsOpen] = useState();
+  const { isChecked, checkReverse, checkOff } = useCheck();
 
   useEffect(() => {
-    setIsOpen(false);
+    checkOff();
   }, [addressForm]);
 
   const open = useDaumPostcodePopup();
   const handleBtnClick = () => {
-    if (isOpen) return;
-    setIsOpen(!isOpen);
+    if (isChecked) return;
+    checkReverse();
     open({
       onComplete: handleComplete,
       onClose: () => {
-        setIsOpen(false);
+        checkOff();
       },
     });
   };

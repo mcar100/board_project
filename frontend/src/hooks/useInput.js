@@ -26,13 +26,19 @@ function useInput(defaultValue, inputRef) {
   return { inputValue, handleChangeInput, resetInput };
 }
 
-function useCheckbox(defaultValue) {
+function useCheck(defaultValue) {
   const [isChecked, setIsChecked] = useState(defaultValue);
-  const handleCheckBox = () => {
+  const checkReverse = () => {
     setIsChecked(!isChecked);
   };
+  const checkOn = () => {
+    setIsChecked(true);
+  };
+  const checkOff = () => {
+    setIsChecked(false);
+  };
 
-  return { isChecked, handleCheckBox };
+  return { isChecked, checkReverse, checkOn, checkOff };
 }
 
-export { useInput, useCheckbox };
+export { useInput, useCheck };

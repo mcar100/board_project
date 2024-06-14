@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Form, CardLink } from "react-bootstrap";
-import { useInput, useCheckbox } from "../../hooks/useInput";
+import { useInput, useCheck } from "../../hooks/useInput";
 import useLink from "../../hooks/useLink";
 import AuthCardLayout from "../Layout/AuthCardLayout";
 
@@ -120,7 +120,10 @@ function FormButton({
 }
 
 function FormCheckBox({ name, className = "", text, defaultValue }) {
-  const { isChecked, handleCheckBox } = useCheckbox(defaultValue);
+  const { isChecked, checkReverse } = useCheck(defaultValue);
+  const handleCheckBox = () => {
+    checkReverse();
+  };
 
   return (
     <Form.Group className="mb-3">
