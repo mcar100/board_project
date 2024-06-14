@@ -5,13 +5,11 @@ import Pagination from "../../components/Common/Pagination";
 import { UserContext } from "../../context/UserContext";
 import useLink from "../../hooks/useLink";
 import { getBoardList } from "../../services/BoardApi";
+import usePagination from "../../hooks/usePagination";
 
 function Home() {
-  const [pageInfo, setPageInfo] = useState({
-    pageNo: 1,
-    pageSize: 10,
-    lastPageNo: 1,
-  });
+  const { pageInfo, setPagination, setPageNo } = usePagination();
+
   const [tableList, setTableList] = useState();
   const userContext = useContext(UserContext);
   const isLogin = userContext.isLogin;
@@ -22,12 +20,7 @@ function Home() {
       const result = await getBoardList(pageInfo.pageNo);
       if (result) {
         setTableList(result.boardList);
-        setPageInfo((prev) => ({
-          ...prev,
-          pageNo: result.pageNo,
-          lastPageNo: result.lastPageNo,
-          pageSize: result.pageSize,
-        }));
+        setPagination(result);
       }
     };
     load();
@@ -55,12 +48,7 @@ function Home() {
         게시글 작성
       </Button>
 
-      <Pagination
-        pageSize={pageInfo.pageSize}
-        currentPageNo={pageInfo.pageNo}
-        lastPageNo={pageInfo.lastPageNo}
-        setPageInfo={setPageInfo}
-      />
+      <Pagination pageInfo={pageInfo} setPageNo={setPageNo} />
     </>
   );
 }

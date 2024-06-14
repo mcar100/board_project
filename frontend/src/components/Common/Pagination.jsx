@@ -1,12 +1,8 @@
 import { Container, Pagination } from "react-bootstrap";
 
-function CustomPagination({
-  pageSize,
-  currentPageNo,
-  lastPageNo,
-  setPageInfo,
-}) {
-  const range = Math.ceil(currentPageNo / pageSize);
+function CustomPagination({ pageInfo, setPageNo }) {
+  const { pageSize, pageNo, lastPageNo } = pageInfo;
+  const range = Math.ceil(pageNo / pageSize);
   const startNo = (range - 1) * pageSize + 1;
   let endNo = range * pageSize;
   if (endNo > lastPageNo) {
@@ -14,26 +10,20 @@ function CustomPagination({
   }
 
   const handlePageBtnClick = (n) => {
-    setPageInfo((prev) => ({
-      ...prev,
-      pageNo: n,
-    }));
+    setPageNo(n);
   };
 
   const handleArrowBtnClick = (n) => {
-    let newPageNo = currentPageNo;
+    let newPageNo = pageNo;
     newPageNo += n;
 
-    setPageInfo((prev) => ({
-      ...prev,
-      pageNo: newPageNo,
-    }));
+    setPageNo(newPageNo);
   };
 
   const paging = () => {
     const result = [];
     for (let i = startNo; i <= endNo; i++) {
-      if (i === currentPageNo) {
+      if (i === pageNo) {
         result.push(<Pagination.Item active key={i} children={i} />);
       } else {
         result.push(
@@ -56,7 +46,7 @@ function CustomPagination({
         <Pagination.Prev
           aria-hidden
           children="◀"
-          disabled={currentPageNo === 1}
+          disabled={pageNo === 1}
           onClick={() => {
             handleArrowBtnClick(-1);
           }}
@@ -66,7 +56,7 @@ function CustomPagination({
         <Pagination.Next
           aria-hidden
           children="▶"
-          disabled={currentPageNo === lastPageNo}
+          disabled={pageNo === lastPageNo}
           onClick={() => {
             handleArrowBtnClick(1);
           }}
