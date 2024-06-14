@@ -1,14 +1,15 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { login } from "../../services/UserApi";
 import useLink from "../../hooks/useLink";
+import { useCheck } from "../../hooks/useInput";
 
 function Login() {
   const formRef = useRef(null);
-  const [isVerify, setIsVerify] = useState(false);
+  const { isChecked, checkOff, checkOn } = useCheck(false);
   const goToPage = useLink();
 
   const handleSubmitForm = async (e) => {
@@ -60,12 +61,12 @@ function Login() {
         text="Remember Me"
         cookieId="email"
       />
-      <UserForm.Recaptcha setIsVerify={setIsVerify} />
+      <UserForm.Recaptcha verifyOn={checkOn} verifyOff={checkOff} />
       <Form.Button
         isSubmit
         value="로그인"
-        className={!isVerify && "form-disabled"}
-        disabled={!isVerify && "disabled"}
+        className={!isChecked && "form-disabled"}
+        disabled={!isChecked && "disabled"}
       />
       <hr />
       <Form.Link text="Create an Account!" href="/membership" />

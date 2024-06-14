@@ -35,13 +35,13 @@ function CookieFormCheckBox({ name, className, text, cookieId }) {
   );
 }
 
-function RecaptchaForm({ setIsVerify }) {
+function RecaptchaForm({ verifyOn, verifyOff }) {
   const siteKey = "6Lf3CtopAAAAAGgqtQkIPw6l2pY16WmfgpgenWtb";
   const handleChange = () => {
-    setIsVerify(true);
+    verifyOn();
   };
   const handleExpired = () => {
-    setIsVerify(false);
+    verifyOff();
   };
 
   return (

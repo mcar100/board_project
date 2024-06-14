@@ -74,7 +74,6 @@ function NameForm() {
 function EmailForm() {
   const [email, setEmail] = useState("");
   const { isChecked, checkOff, checkOn } = useCheck(false);
-  const [isVerify, setIsVerify] = useState(false);
   const emailRef = useRef();
 
   const handleBtnClick = async () => {
@@ -126,7 +125,6 @@ function EmailForm() {
           isVerify={isChecked}
           verifyOn={checkOn}
           verifyOff={checkOff}
-          setIsVerify={setIsVerify}
         />
       )}
     </>
