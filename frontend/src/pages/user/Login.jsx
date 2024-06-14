@@ -1,15 +1,15 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { login } from "../../services/UserApi";
+import useLink from "../../hooks/useLink";
 
 function Login() {
   const formRef = useRef(null);
   const [isVerify, setIsVerify] = useState(false);
-  const navigate = useNavigate();
+  const goToPage = useLink();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ function Login() {
       const result = await login(formRef);
       alert(result.message);
       if (result.success) {
-        navigate(result.url);
+        goToPage(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);

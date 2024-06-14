@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, CardLink, FloatingLabel } from "react-bootstrap";
-import { preventInputs, replaceInputs } from "../../utils/validator";
+import { useEffect } from "react";
+import { Form, CardLink } from "react-bootstrap";
+import { useInput, useCheckbox } from "../../hooks/useInput";
+import useLink from "../../hooks/useLink";
 import AuthCardLayout from "../Layout/AuthCardLayout";
 
 function AuthFormFrame({
@@ -48,21 +48,7 @@ function FormInput({
   defaultValue,
   ...otherProps
 }) {
-  const [inputValue, setInputValue] = useState("");
-  const handleChangeInput = (e) => {
-    if (!inputRef) {
-      setInputValue(e.target.value);
-      return;
-    }
-    const preventedValue = preventInputs(inputRef.current.name, e.target.value);
-    const replacedValue = replaceInputs(inputRef.current.name, preventedValue);
-    setInputValue(replacedValue);
-  };
-
-  useEffect(() => {
-    if (!defaultValue) return;
-    setInputValue(defaultValue);
-  }, [defaultValue]);
+  const { inputValue, handleChangeInput } = useInput(defaultValue, inputRef);
 
   return (
     <Form.Group className="mb-3">
@@ -90,21 +76,14 @@ function FormTextarea({
   setSubmitDetected,
   ...otherProps
 }) {
-  const [inputValue, setInputValue] = useState("");
-  const handleChangeInput = (e) => {
-    setInputValue(e.target.value);
-  };
+  const { inputValue, handleChangeInput, resetInput } = useInput(defaultValue);
+
   useEffect(() => {
     if (submitDetected) {
-      setInputValue("");
+      resetInput();
       setSubmitDetected(false);
     }
   }, [submitDetected]);
-
-  useEffect(() => {
-    if (!defaultValue) return;
-    setInputValue(defaultValue);
-  }, [defaultValue]);
 
   return (
     <Form.Control
@@ -141,10 +120,8 @@ function FormButton({
 }
 
 function FormCheckBox({ name, className = "", text, defaultValue }) {
-  const [isChecked, setIsChecked] = useState(defaultValue);
-  const handleCheckBox = () => {
-    setIsChecked(!isChecked);
-  };
+  const { isChecked, handleCheckBox } = useCheckbox(defaultValue);
+
   return (
     <Form.Group className="mb-3">
       <div className="custom-control custom-checkbox small">
@@ -167,13 +144,14 @@ function FormCheckBox({ name, className = "", text, defaultValue }) {
 }
 
 function FormLink({ href, className = "", text }) {
-  const navigate = useNavigate();
-  const handleLinkClick = (e) => {
-    e.preventDefault();
-    navigate(href);
-  };
+  const handleLinkClick = useLink();
   return (
-    <div className={`text-center ${className}`} onClick={handleLinkClick}>
+    <div
+      className={`text-center ${className}`}
+      onClick={(e) => {
+        handleLinkClick(href, e);
+      }}
+    >
       <CardLink className="small" href={"#"}>
         {text}
       </CardLink>

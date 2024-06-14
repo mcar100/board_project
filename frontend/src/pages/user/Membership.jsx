@@ -1,14 +1,14 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import * as Form from "../../components/Form/Form";
 import * as UserForm from "../../components/User/MembershipForm";
 import { checkFormInfo } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { register } from "../../services/UserApi";
+import useLink from "../../hooks/useLink";
 
 function Membership() {
   const formRef = useRef(null);
-  const navigate = useNavigate();
+  const goToPage = useLink();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -20,7 +20,7 @@ function Membership() {
       const result = await register(formRef);
       if (result) {
         alert(result.message);
-        navigate(result.url);
+        goToPage(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);

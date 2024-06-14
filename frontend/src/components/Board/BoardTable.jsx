@@ -1,12 +1,8 @@
 import { Table, CardLink } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import useLink from "../../hooks/useLink";
 
 function BoardTable({ data }) {
-  const navigate = useNavigate();
-  const handleTitleClick = (e, n) => {
-    e.preventDefault();
-    navigate(`/boards/${n}`);
-  };
+  const handleTitleClick = useLink();
   return (
     <Table responsive bordered cellSpacing={0}>
       <colgroup>
@@ -35,7 +31,7 @@ function BoardTable({ data }) {
                 <CardLink
                   href={`#`}
                   onClick={(e) => {
-                    handleTitleClick(e, el.boardId);
+                    handleTitleClick(`/boards/${el.boardId}`, e);
                   }}
                 >
                   {el.title}

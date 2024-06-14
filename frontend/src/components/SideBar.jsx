@@ -5,19 +5,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { logout } from "../services/UserApi";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { Link } from "./Form/Form";
+import useLink from "../hooks/useLink";
 
 function Sidebar() {
   const user = useContext(UserContext);
-  const navigate = useNavigate();
-  const handleLinkClick = (e, link) => {
-    e.preventDefault();
-    navigate(link);
-  };
+  const handleLinkClick = useLink();
+
   const handleLogoutClick = async (e) => {
     e.preventDefault();
     try {
@@ -28,7 +24,7 @@ function Sidebar() {
       const result = await logout();
       if (result) {
         alert(result.message);
-        navigate(result.url);
+        handleLinkClick(result.url, e);
       }
     } catch (thrown) {
       alert("로그아웃에 실패했습니다.");
@@ -43,8 +39,7 @@ function Sidebar() {
         <Navbar.Brand
           href="#"
           onClick={(e) => {
-            e.preventDefault();
-            navigate("/");
+            handleLinkClick("/", e);
           }}
           className="sidebar-brand d-flex align-items-center justify-content-center"
         >
@@ -70,7 +65,7 @@ function Sidebar() {
                 <NavDropdown.Item
                   href="#"
                   onClick={(e) => {
-                    handleLinkClick(e, "/login");
+                    handleLinkClick("/login", e);
                   }}
                 >
                   Login
@@ -78,7 +73,7 @@ function Sidebar() {
                 <NavDropdown.Item
                   href="#"
                   onClick={(e) => {
-                    handleLinkClick(e, "/membership");
+                    handleLinkClick("/membership", e);
                   }}
                 >
                   Membership
@@ -101,7 +96,7 @@ function Sidebar() {
           <a
             className="nav-link"
             onClick={(e) => {
-              handleLinkClick(e, "/");
+              handleLinkClick("/", e);
             }}
           >
             <FontAwesomeIcon fixedWidth icon={faTable}></FontAwesomeIcon>

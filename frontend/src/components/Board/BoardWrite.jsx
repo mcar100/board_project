@@ -1,12 +1,12 @@
 import { useRef } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import * as Form from "../Form/Form";
 import FileWrite from "./File/FileWrite";
 import { updateBoard, writeBoard } from "../../services/BoardApi";
 import { updateFile } from "../../services/FileApi";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
+import useLink from "../../hooks/useLink";
 
 function BoardWrite({ boardId, boardData, fileDataList }) {
   const formRef = useRef(null);
@@ -14,7 +14,7 @@ function BoardWrite({ boardId, boardData, fileDataList }) {
     originIdList: [],
     newFiles: [],
   });
-  const navigate = useNavigate();
+  const goToPage = useLink();
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ function BoardWrite({ boardId, boardData, fileDataList }) {
         throw new ValidatorAlert(fileResult.message);
       }
       alert(boardResult.message);
-      navigate(boardResult.url);
+      goToPage(boardResult.url);
     } catch (thrown) {
       thrownHandler(thrown);
     }

@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import { Card, Button } from "react-bootstrap";
 import { UserContext } from "../../context/UserContext";
-import { useNavigate } from "react-router-dom";
 import FileDetail from "./File/FileDetail";
 import CommentDetail from "./Comment/CommentDetail";
 import { MODIFY } from "../../utils/constants";
 import { deleteBoard } from "../../services/BoardApi";
+import useLink from "../../hooks/useLink";
 
 function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
   const userContext = useContext(UserContext);
   const username = userContext.userInfo ? userContext.userInfo.name : "";
-  const navigate = useNavigate();
+  const goToPage = useLink();
 
   const handleDeleteClick = async () => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -18,7 +18,7 @@ function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
     const result = await deleteBoard(boardId);
     if (result.success) {
       alert(result.message);
-      navigate(result.url);
+      goToPage(result.url);
     } else {
       alert(result.message);
     }
