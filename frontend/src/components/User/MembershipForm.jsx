@@ -73,6 +73,7 @@ function NameForm() {
 
 function EmailForm() {
   const [email, setEmail] = useState("");
+  const { isChecked, checkOff, checkOn } = useCheck(false);
   const [isVerify, setIsVerify] = useState(false);
   const emailRef = useRef();
 
@@ -86,12 +87,12 @@ function EmailForm() {
       const result = await checkDuplicate(emailRef);
       if (result) {
         setEmail(result.value);
-        setIsVerify(false);
+        checkOff();
         alert("사용가능한 이메일입니다.");
       }
     } catch (thrown) {
       setEmail("");
-      setIsVerify(false);
+      checkOff();
       thrownHandler(thrown);
       emailRef.current.focus();
     }
@@ -104,25 +105,27 @@ function EmailForm() {
             inputRef={emailRef}
             name="email"
             placeholder="이메일주소"
-            className={isVerify && "form-clear"}
+            className={isChecked && "form-clear"}
             data-title="이메일"
-            data-valid={isVerify && email}
-            disabled={isVerify}
+            data-valid={isChecked && email}
+            disabled={isChecked}
           />
         </Col>
         <Col sm={3}>
           <Form.Button
             value="중복 확인"
             onClick={handleBtnClick}
-            className={isVerify && "form-disabled"}
-            disabled={isVerify}
+            className={isChecked && "form-disabled"}
+            disabled={isChecked}
           />
         </Col>
       </Row>
-      {email && !isVerify && (
+      {email && !isChecked && (
         <EmailAuthForm
           email={email}
-          isVerify={isVerify}
+          isVerify={isChecked}
+          verifyOn={checkOn}
+          verifyOff={checkOff}
           setIsVerify={setIsVerify}
         />
       )}
@@ -130,23 +133,23 @@ function EmailForm() {
   );
 }
 
-function EmailAuthForm({ email, isVerify, setIsVerify }) {
-  const [isSend, setIsSend] = useState(false);
+function EmailAuthForm({ email, isVerify, verifyOn, verifyOff }) {
+  const { isChecked, checkOn, checkOff } = useCheck(false);
   const emailAuthRef = useRef();
 
   useEffect(() => {
-    setIsSend(false);
+    checkOff();
   }, [email]);
 
   const handleSendAuthBtnClick = async () => {
     try {
       const result = await sendEmailVerification(email);
       if (result) {
-        setIsSend(true);
+        checkOn();
         alert(result.message);
       }
     } catch (thrown) {
-      setIsSend(false);
+      checkOff();
       thrownHandler(thrown);
     }
   };
@@ -155,13 +158,13 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
       const userCode = emailAuthRef.current.value;
       const result = await checkEmailVerification(userCode);
       if (result) {
-        setIsVerify(true);
+        verifyOn();
         alert(result.message);
       }
     } catch (thrown) {
       if (thrown instanceof AxiosError && thrown.response.status === 404) {
-        setIsVerify(false);
-        setIsSend(false);
+        verifyOff();
+        checkOff();
       }
       thrownHandler(thrown);
     }
@@ -178,10 +181,10 @@ function EmailAuthForm({ email, isVerify, setIsVerify }) {
             data-title="이메일 인증"
             disabled={isVerify}
           />
-          {isSend && !isVerify && <Timer />}
+          {isChecked && !isVerify && <Timer />}
         </Col>
         <Col sm={4}>
-          {!isSend ? (
+          {!isChecked ? (
             <Form.Button
               value="인증번호 전송"
               onClick={handleSendAuthBtnClick}
