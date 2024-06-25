@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form, CardLink } from "react-bootstrap";
+import { useLinkNavigate } from "../../context/NavigationContext";
 import { useInput, useCheck } from "../../hooks/useInput";
-import useLink from "../../hooks/useLink";
 import AuthCardLayout from "../Layout/AuthCardLayout";
 
 function AuthFormFrame({
@@ -147,12 +147,13 @@ function FormCheckBox({ name, className = "", text, defaultValue }) {
 }
 
 function FormLink({ href, className = "", text }) {
-  const handleLinkClick = useLink();
+  const navigate = useLinkNavigate();
   return (
     <div
       className={`text-center ${className}`}
       onClick={(e) => {
-        handleLinkClick(href, e);
+        e.preventDefault();
+        navigate(href);
       }}
     >
       <CardLink className="small" href={"#"}>

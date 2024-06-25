@@ -6,15 +6,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { logout } from "../services/UserApi";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import useLink from "../hooks/useLink";
+import { useLinkNavigate } from "../context/NavigationContext";
 
-function Sidebar() {
+const Sidebar = () => {
   const user = useContext(UserContext);
-  const handleLinkClick = useLink();
+  const navigate = useLinkNavigate();
 
-  const handleLogoutClick = async (e) => {
+  const handleLogoutClick = useCallback(async (e) => {
     e.preventDefault();
     try {
       if (!confirm("로그아웃하시겠습니까?")) {
@@ -24,12 +24,12 @@ function Sidebar() {
       const result = await logout();
       if (result) {
         alert(result.message);
-        handleLinkClick(result.url, e);
+        navigate(result.url);
       }
     } catch (thrown) {
       alert("로그아웃에 실패했습니다.");
     }
-  };
+  }, []);
   return (
     <Navbar
       id="accordionSidebar"
@@ -39,7 +39,8 @@ function Sidebar() {
         <Navbar.Brand
           href="#"
           onClick={(e) => {
-            handleLinkClick("/", e);
+            e.preventDefault();
+            navigate("/");
           }}
           className="sidebar-brand d-flex align-items-center justify-content-center"
         >
@@ -65,7 +66,8 @@ function Sidebar() {
                 <NavDropdown.Item
                   href="#"
                   onClick={(e) => {
-                    handleLinkClick("/login", e);
+                    e.preventDefault();
+                    navigate("/login");
                   }}
                 >
                   Login
@@ -73,7 +75,8 @@ function Sidebar() {
                 <NavDropdown.Item
                   href="#"
                   onClick={(e) => {
-                    handleLinkClick("/membership", e);
+                    e.preventDefault();
+                    navigate("/membership");
                   }}
                 >
                   Membership
@@ -96,7 +99,8 @@ function Sidebar() {
           <a
             className="nav-link"
             onClick={(e) => {
-              handleLinkClick("/", e);
+              e.preventDefault();
+              navigate("/");
             }}
           >
             <FontAwesomeIcon fixedWidth icon={faTable}></FontAwesomeIcon>
@@ -115,6 +119,6 @@ function Sidebar() {
       </Nav>
     </Navbar>
   );
-}
+};
 
 export default Sidebar;

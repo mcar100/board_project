@@ -39,7 +39,6 @@ export const writeBoard = async (formRef) => {
       };
     }
   } catch (thrown) {
-    console.log(thrown);
     return {
       success: false,
       message: "게시글 등록에 실패했습니다.",

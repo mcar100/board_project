@@ -6,7 +6,7 @@ import { updateBoard, writeBoard } from "../../services/BoardApi";
 import { updateFile } from "../../services/FileApi";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
-import useLink from "../../hooks/useLink";
+import { useLinkNavigate } from "../../context/NavigationContext";
 
 function BoardWrite({ boardId, boardData, fileDataList }) {
   const formRef = useRef(null);
@@ -14,7 +14,7 @@ function BoardWrite({ boardId, boardData, fileDataList }) {
     originIdList: [],
     newFiles: [],
   });
-  const goToPage = useLink();
+  const navigate = useLinkNavigate();
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ function BoardWrite({ boardId, boardData, fileDataList }) {
         throw new ValidatorAlert(fileResult.message);
       }
       alert(boardResult.message);
-      goToPage(boardResult.url);
+      navigate(boardResult.url);
     } catch (thrown) {
       thrownHandler(thrown);
     }

@@ -4,11 +4,11 @@ import * as UserForm from "../../components/User/MembershipForm";
 import { checkFormInfo } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { register } from "../../services/UserApi";
-import useLink from "../../hooks/useLink";
+import { useLinkNavigate } from "../../context/NavigationContext";
 
 function Membership() {
   const formRef = useRef(null);
-  const goToPage = useLink();
+  const navigate = useLinkNavigate();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -20,7 +20,7 @@ function Membership() {
       const result = await register(formRef);
       if (result) {
         alert(result.message);
-        goToPage(result.url);
+        navigate(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);

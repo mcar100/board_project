@@ -3,9 +3,9 @@ import { Button } from "react-bootstrap";
 import BoardTable from "../../components/Board/BoardTable";
 import Pagination from "../../components/Common/Pagination";
 import { UserContext } from "../../context/UserContext";
-import useLink from "../../hooks/useLink";
 import { getBoardList } from "../../services/BoardApi";
 import usePagination from "../../hooks/usePagination";
+import { useLinkNavigate } from "../../context/NavigationContext";
 
 function Home() {
   const { pageInfo, setPagination, setPageNo } = usePagination();
@@ -13,7 +13,7 @@ function Home() {
   const [tableList, setTableList] = useState();
   const userContext = useContext(UserContext);
   const isLogin = userContext.isLogin;
-  const goToPage = useLink();
+  const navigate = useLinkNavigate();
 
   useEffect(() => {
     const load = async () => {
@@ -28,11 +28,11 @@ function Home() {
 
   const handleBtnClick = () => {
     if (isLogin) {
-      goToPage("/boards");
+      navigate("/boards");
       return;
     }
     if (confirm("로그인 하시겠습니까?")) {
-      goToPage("/login");
+      navigate("/login");
     }
   };
 

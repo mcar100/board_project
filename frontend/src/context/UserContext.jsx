@@ -10,11 +10,12 @@ const initialState = {
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(initialState);
+
   useEffect(() => {
     async function updateUser() {
       try {
         const result = await getUserProfile();
-        if (result && result.data) {
+        if (result && result.data && !user.isLogin) {
           setUser((prev) => ({
             ...prev,
             userInfo: {
@@ -32,5 +33,6 @@ export function UserProvider({ children }) {
     }
     updateUser();
   }, []);
+
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 }

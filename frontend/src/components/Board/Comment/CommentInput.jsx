@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as Form from "../../Form/Form";
 import { createComment, updateComment } from "../../../services/commentApi";
@@ -19,7 +19,7 @@ function CommentInput({
   const params = useParams();
   const boardId = params.id;
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       const [isCheck, checkMsg, invalidTarget] = checkFormInfoBlank(
@@ -51,7 +51,7 @@ function CommentInput({
     } catch (thrown) {
       thrownHandler(thrown);
     }
-  };
+  }, []);
 
   return (
     <Form.Frame

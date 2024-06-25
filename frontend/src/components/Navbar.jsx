@@ -4,14 +4,33 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
+import { useLinkNavigate } from "../context/NavigationContext";
 import { UserContext } from "../context/UserContext";
-import useLink from "../hooks/useLink";
+import { logout } from "../services/UserApi";
 
 function CustomNavbar() {
   const user = useContext(UserContext);
-  const handleNavClick = useLink();
+  const navigate = useLinkNavigate();
+
+  const handleLogoutClick = useCallback(async (e) => {
+    e.preventDefault();
+    try {
+      if (!confirm("로그아웃하시겠습니까?")) {
+        return;
+      }
+
+      const result = await logout();
+      if (result) {
+        alert(result.message);
+        navigate(result.url);
+      }
+    } catch (thrown) {
+      console.log(thrown);
+      alert("로그아웃에 실패했습니다.");
+    }
+  }, []);
 
   return (
     <Navbar
@@ -54,7 +73,8 @@ function CustomNavbar() {
               >
                 <Dropdown.Item
                   onClick={(e) => {
-                    handleNavClick("/profile", e);
+                    e.preventDefault();
+                    navigate("/profile");
                   }}
                 >
                   <FontAwesomeIcon
@@ -66,13 +86,7 @@ function CustomNavbar() {
                   Profile
                 </Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!confirm("로그아웃 하시겠습니까?")) return;
-                    handleNavClick("/login");
-                  }}
-                >
+                <Dropdown.Item onClick={handleLogoutClick}>
                   <FontAwesomeIcon
                     icon={faSignOutAlt}
                     size="sm"

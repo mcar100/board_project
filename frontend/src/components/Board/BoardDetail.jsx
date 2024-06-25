@@ -5,12 +5,12 @@ import FileDetail from "./File/FileDetail";
 import CommentDetail from "./Comment/CommentDetail";
 import { MODIFY } from "../../utils/constants";
 import { deleteBoard } from "../../services/BoardApi";
-import useLink from "../../hooks/useLink";
+import { useLinkNavigate } from "../../context/NavigationContext";
 
 function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
   const userContext = useContext(UserContext);
   const username = userContext.userInfo ? userContext.userInfo.name : "";
-  const goToPage = useLink();
+  const navigate = useLinkNavigate();
 
   const handleDeleteClick = async () => {
     if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -18,7 +18,7 @@ function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
     const result = await deleteBoard(boardId);
     if (result.success) {
       alert(result.message);
-      goToPage(result.url);
+      navigate(result.url);
     } else {
       alert(result.message);
     }

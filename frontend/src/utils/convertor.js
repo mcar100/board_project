@@ -36,6 +36,14 @@ const convertSecondToTimerFormat = (timer) => {
   return [Math.floor(timer / 60), timer % 60];
 };
 
+const getNameTable = (commentList) => {
+  const nameTable = {};
+  commentList.forEach((el) => {
+    nameTable[el.id] = el.userName;
+  });
+  return nameTable;
+};
+
 export {
   convertFormToObject,
   convertStringToBytes,
@@ -43,4 +51,5 @@ export {
   getPathNameNumber,
   padNumber,
   convertSecondToTimerFormat,
+  getNameTable,
 };

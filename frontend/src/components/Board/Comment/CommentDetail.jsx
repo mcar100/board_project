@@ -1,9 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 import { getComments } from "../../../services/commentApi";
 import { thrownHandler } from "../../../utils/ValidatorAlert";
 import { UserContext } from "../../../context/UserContext";
+import { getNameTable } from "../../../utils/convertor";
 
 function CommentDetail({ boardId, writer }) {
   const [commentList, setCommentlist] = useState([]);
@@ -11,23 +12,46 @@ function CommentDetail({ boardId, writer }) {
   const { isLogin, userInfo } = userContext;
   const isWriter = userInfo && userInfo.name === writer;
 
-  const nameTable = {};
-  commentList.forEach((el) => {
-    nameTable[el.id] = el.userName;
-  });
+  const compareComment = useCallback(
+    (oldLists, newLists) => {
+      if (!oldLists.length) {
+        return newLists;
+      }
 
-  const load = async () => {
+      if (oldLists.length === newLists.length) {
+        return oldLists;
+      }
+
+      return newLists.map((newComment) => {
+        const oldComment = oldLists.find((el) => el.id === newComment.id);
+        if (!oldComment) {
+          return newComment;
+        }
+
+        if (newComment.id === oldComment.id) {
+          return oldComment;
+        } else {
+          return newComment;
+        }
+      });
+    },
+    [commentList]
+  );
+
+  const load = useCallback(async () => {
     try {
       const result = await getComments(boardId);
-      setCommentlist(() => result);
+      setCommentlist((prev) => compareComment(prev, result));
     } catch (thrown) {
       thrownHandler(thrown);
     }
-  };
+  }, [boardId]);
 
   useEffect(() => {
     load();
   }, []);
+
+  const nameTable = useMemo(() => getNameTable(commentList), [commentList]);
 
   return (
     <>

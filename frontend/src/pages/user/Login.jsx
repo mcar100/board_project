@@ -4,13 +4,13 @@ import * as UserForm from "../../components/User/LoginForm";
 import { checkFormInfoBlank } from "../../utils/validator";
 import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { login } from "../../services/UserApi";
-import useLink from "../../hooks/useLink";
 import { useCheck } from "../../hooks/useInput";
+import { useLinkNavigate } from "../../context/NavigationContext";
 
 function Login() {
   const formRef = useRef(null);
   const { isChecked, checkOff, checkOn } = useCheck(false);
-  const goToPage = useLink();
+  const navigate = useLinkNavigate();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -27,7 +27,7 @@ function Login() {
       const result = await login(formRef);
       alert(result.message);
       if (result.success) {
-        goToPage(result.url);
+        navigate(result.url);
       }
     } catch (thrown) {
       thrownHandler(thrown);
