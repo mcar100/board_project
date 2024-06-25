@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.mapper.CommentMapper">
+	<insert id="insertRootCommentData" parameterType="com.example.demo.board.model.Comment">
+		INSERT 
+			INTO comments (content, board_id, users_id)
+			VALUES (#{content}, #{boardId}, #{usersId})
+	</insert>
+	<insert id="insertReplyCommentData" parameterType="com.example.demo.board.model.Comment">
+		INSERT 
+			INTO comments (content, board_id, users_id, parent_id, depth)
+			VALUES (#{content}, #{boardId}, #{usersId}, #{parentId}, #{depth})
+	</insert>
+	<select id="selectCommentsDataByBoardId" parameterType="java.lang.Integer" resultType="com.example.demo.board.model.Comment">
+		SELECT c.*, u.name as "userName"
+			FROM comments c, users u
+			WHERE c.board_id = #{boardId}
+			AND c.users_id = u.id
+			ORDER BY c.id
+	</select>
+	<update id="updateCommentData" parameterType="com.example.demo.board.model.Comment">
+		UPDATE comments
+			SET 
+				content = #{content},
+				modify_at = SYSDATE
+			WHERE id = #{id}
+	</update>
+	<update id="updateCommentStatusDeletedById" parameterType="java.lang.Integer">
+		UPDATE comments
+			SET 
+				status = 'DELETED',
+				deleted_at = SYSDATE
+			WHERE id = #{commentId}
+	</update>
+</mapper>

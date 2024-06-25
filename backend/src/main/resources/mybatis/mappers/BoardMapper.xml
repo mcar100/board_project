@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.board.mapper.BoardMapper">
+	<insert id="insertBoardData" parameterType="com.example.demo.board.model.Board" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT 
+			INTO board (title, content, user_id) 
+			VALUES (#{title}, #{content, jdbcType=CLOB}, #{userId}) 
+	</insert>
+	<select id="countAllBoardData" resultType="int">
+		SELECT 
+			COUNT(*) FROM board 
+			WHERE status = 'PUBLIC'
+	</select>
+	<select id="selectBoardDataInRange" parameterType="com.example.demo.board.model.SearchDTO" resultType="hashmap">
+		SELECT 
+			RN as "rowNum",b.id as "boardId", b.title as "title", TO_CHAR(b.created_at, 'YYYY-MM-DD') as "createdAt", u.name as "userName", COUNT(c.id) as "commentsCount"
+   			FROM (SELECT ROWNUM RN, public_ordered_board.* FROM (SELECT * FROM board WHERE status = 'PUBLIC' ORDER BY created_at) public_ordered_board) b, users u, comments c
+    		WHERE b.user_id = u.id
+    		AND b.id = c.board_id(+)
+    		AND RN BETWEEN #{startNo} AND #{endNo}
+    		GROUP BY RN, b.id, b.title, b.created_at, u.name
+    		ORDER BY RN DESC
+	</select>
+	<select id="selectBoardDataById" parameterType="java.lang.Integer"  resultType="hashmap" >
+		SELECT 
+			b. id as "boardId",
+    		b.title as "boardTitle", 
+    		b.status as "boardStatus",
+    		DBMS_LOB.SUBSTR(b.content, 4000, 1) as "boardContent",
+    		TO_CHAR(b.created_at, 'YYYY-MM-DD') as "boardCreatedAt", 
+    		u.id as "userId", 
+    		u.name as "userName"
+		FROM board b
+		INNER JOIN users u ON b.user_id = u.id
+		WHERE b.id = #{boardId}
+	</select>
+	<update id="updateBoardData" parameterType="com.example.demo.board.model.Board">
+		UPDATE board
+			SET 
+				title = #{title},
+				content = #{content, jdbcType=CLOB},
+				modify_at = SYSDATE
+			WHERE id = #{id}
+	</update>
+	<update id="updateBoardStatusDeletedById" parameterType="java.lang.Integer">
+		UPDATE board
+			SET 
+				status = 'DELETED',
+				deleted_at = SYSDATE
+			WHERE id = #{boardId}
+	</update>
+	<delete id="deleteBoardDataById" parameterType="java.lang.Integer">
+		DELETE 
+			FROM board WHERE id = #{boardId}
+	</delete>
+</mapper>
