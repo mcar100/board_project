@@ -20,7 +20,7 @@ public class MailConfig {
 	public JavaMailSender mailService() {
 		JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 		
-		javaMailSender.setHost("smtp.naver.com"); // stmp sever
+		javaMailSender.setHost("smtp.naver.com"); // smtp sever
 		javaMailSender.setUsername(username);
 		javaMailSender.setPassword(password);
 		javaMailSender.setPort(587); // smtps port number

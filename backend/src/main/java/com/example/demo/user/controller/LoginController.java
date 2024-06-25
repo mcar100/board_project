@@ -58,7 +58,7 @@ public class LoginController {
     		session.setAttribute("user", user);
     		session.setAttribute("userId",user.getId());
     		session.setAttribute("username",user.getName());
-    		session.setMaxInactiveInterval(1800*30);
+    		session.setMaxInactiveInterval(60*30);
     		
     		log.info(loginFormat.getEmail()+" login");
     		return ResponseEntity.ok().body(new LoginResponse(user.getId(),"로그인되었습니다."));
