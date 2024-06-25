@@ -15,6 +15,6 @@
 - BE: JAVA/MyBatis/Oracle
 
 ### 추가 링크
-Notion:  [노션 이동](/3-React-SpringBoot-6b60bb670e9d4dac928ed8086f769ed9?pvs=4)
+Notion:  [노션 이동](https://www.notion.so/3-React-SpringBoot-6b60bb670e9d4dac928ed8086f769ed9?pvs=4)
 
 <br/>
