@@ -52,3 +52,17 @@ export const updateFile = async (fileRef, boardId) => {
     return { success: false, message: "파일 등록에 실패했습니다." };
   }
 };
+
+export const getReportFile = async () => {
+  try {
+    const response = await callAxios.get("/report/download", {
+      responseType: "blob",
+    });
+    if (response.status === 200) {
+      downloadFile(response);
+    }
+    console.log(response);
+  } catch (e) {
+    console.log(e);
+  }
+};
