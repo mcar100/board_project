@@ -9,6 +9,7 @@ import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
 import { useLinkNavigate } from "../context/NavigationContext";
 import { UserContext } from "../context/UserContext";
 import { logout } from "../services/UserApi";
+import Report from "./Common/Report";
 
 function CustomNavbar() {
   const user = useContext(UserContext);
@@ -94,6 +95,10 @@ function CustomNavbar() {
                     className="mr-2 text-gray-400"
                   ></FontAwesomeIcon>
                   Logout
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item>
+                  <Report />
                 </Dropdown.Item>
               </Dropdown.Menu>
             )}
