@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.user.mapper.UserMapper">
+	<select id="selectUserDataByEmailAndPassword" resultType="com.example.demo.user.model.User">
+		SELECT * FROM users
+			WHERE email = #{email} AND password = #{encryptedPassword}
+	</select>
+	<select id="selectUserPasswordByEmail" resultType="java.lang.String">
+		SELECT password FROM users
+			WHERE email = #{email}
+	</select>
+	<select id="selectUserById" parameterType="java.lang.Integer" resultType="com.example.demo.user.model.User">
+		SELECT * FROM users
+			WHERE id = #{userId}
+	</select>
+	<insert id="insertUserData" parameterType="com.example.demo.user.model.User">
+		INSERT INTO users (name, email, password, phone, zip_code, address1, address2, details) 
+			VALUES (#{name}, #{email}, #{password}, #{phone}, #{zipCode}, #{address1}, #{address2}, #{details}) 
+	</insert>
+	<select id="countDuplicatedUserName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM users
+			WHERE name = #{value}
+	</select>
+	<select id="countDuplicatedUserEmail" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM users
+			WHERE email = #{value}
+	</select>
+	<update id="updateUserLastLoginById" parameterType="java.lang.Integer">
+			UPDATE users
+				SET
+					last_login = SYSDATE
+				WHERE id = #{id}
+	</update>
+</mapper>
