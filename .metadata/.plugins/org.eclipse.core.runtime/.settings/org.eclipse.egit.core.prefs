@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 GitRepositoriesView.GitDirectories=C\:\\Users\\ui-22\\Desktop\\\uC2B9\uC12D\\workspace\\board_project\\.git;
 GitRepositoriesView.GitDirectories.relative=.git;
+=======
+GitRepositoriesView.GitDirectories=C\:\\Users\\mcar1\\spring_boot_workspace\\work_space4\\board_project(backend)\\.git;C\:\\Users\\mcar1\\git\\board_project(backend)\\.git;
+GitRepositoriesView.GitDirectories.relative=.git;C\:\\Users\\mcar1\\git\\board_project(backend)\\.git;
+>>>>>>> branch 'backend_dev2' of https://github.com/mcar100/board_project.git
 core_autoIgnoreDerivedResources=false
 eclipse.preferences.version=1

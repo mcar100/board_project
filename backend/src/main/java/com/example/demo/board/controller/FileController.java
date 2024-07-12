@@ -1,8 +1,14 @@
 package com.example.demo.board.controller;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +32,11 @@ import com.example.demo.board.model.FileIdRequest;
 import com.example.demo.board.service.FileService;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Slf4j
 @RestController
@@ -36,6 +47,12 @@ public class FileController {
 	private FileService fileService;
 	@Value("${upload.path}")
 	private String uploadPath;
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+	@Value("${spring.datasource.username}")
+	private String dbUsername;
+	@Value("${spring.datasource.password}")
+	private String dbPassword;
 	
 	@PostMapping("files/{boardId}")
 	public ResponseEntity<Boolean> uploadFile(@PathVariable("boardId") Integer boardId, @RequestPart("formData") MultipartFile[] files, HttpServletRequest request) throws Exception {
@@ -109,4 +126,33 @@ public class FileController {
 			return null;
 		}
 	}
+	
+	@GetMapping("report/download")
+	public void getReport(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		log.info(request.getMethod()+" "+request.getRequestURI()+" ");
+		
+		try {
+			Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+			InputStream reportStream = this.getClass().getResourceAsStream("/jasper/SampleReport.jasper");
+			if(reportStream == null) {
+				throw new Exception("Jasper file not found in /jasper/SampleRort.jasper");
+			}
+			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportStream);
+			
+			Map<String,Object> params = new HashMap<>();
+			
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, conn);
+			
+			response.setContentType("application/pdf");
+			response.setHeader("Content-Disposition", "attachment; filename=report.pdf");
+			
+			JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			log.error(e.getMessage()+"");
+		}
+	}
+	
+	
 }
