@@ -22,7 +22,7 @@ function useInput(defaultValue, inputRef) {
   const resetInput = () => {
     setInputValue("");
   };
-
+ 
   return { inputValue, handleChangeInput, resetInput };
 }
 

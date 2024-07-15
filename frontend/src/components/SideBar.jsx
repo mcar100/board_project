@@ -5,14 +5,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { logout } from "../services/UserApi";
-import { useCallback, useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { logout as logoutApi } from "../services/UserApi";
+import { useCallback } from "react";
 import { useLinkNavigate } from "../context/NavigationContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/modules/user";
 
 const Sidebar = () => {
-  const user = useContext(UserContext);
+  const user = useSelector((state)=>state.user);
   const navigate = useLinkNavigate();
+  const dispatch = useDispatch();
 
   const handleLogoutClick = useCallback(async (e) => {
     e.preventDefault();
@@ -21,9 +23,10 @@ const Sidebar = () => {
         return;
       }
 
-      const result = await logout();
+      const result = await logoutApi();
       if (result) {
         alert(result.message);
+        dispatch(logout())
         navigate(result.url);
       }
     } catch (thrown) {

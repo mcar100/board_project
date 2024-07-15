@@ -1,15 +1,14 @@
-import { useContext } from "react";
 import { Card, Button } from "react-bootstrap";
-import { UserContext } from "../../context/UserContext";
 import FileDetail from "./File/FileDetail";
 import CommentDetail from "./Comment/CommentDetail";
 import { MODIFY } from "../../utils/constants";
 import { deleteBoard } from "../../services/BoardApi";
 import { useLinkNavigate } from "../../context/NavigationContext";
+import { useSelector } from "react-redux";
 
 function BoardDetail({ boardId, boardData, fileDataList, setPageType }) {
-  const userContext = useContext(UserContext);
-  const username = userContext.userInfo ? userContext.userInfo.name : "";
+  const user = useSelector(state=>state.user);
+  const username = user.userInfo ? user.userInfo.name : "";
   const navigate = useLinkNavigate();
 
   const handleDeleteClick = async () => {

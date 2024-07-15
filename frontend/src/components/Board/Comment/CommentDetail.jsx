@@ -1,15 +1,15 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CommentItem from "./CommentItem";
 import CommentInput from "./CommentInput";
 import { getComments } from "../../../services/commentApi";
 import { thrownHandler } from "../../../utils/ValidatorAlert";
-import { UserContext } from "../../../context/UserContext";
 import { getNameTable } from "../../../utils/convertor";
+import { useSelector } from "react-redux";
 
 function CommentDetail({ boardId, writer }) {
   const [commentList, setCommentlist] = useState([]);
-  const userContext = useContext(UserContext);
-  const { isLogin, userInfo } = userContext;
+  const user = useSelector(state=>state.user);
+  const { isLogin, userInfo } = user;
   const isWriter = userInfo && userInfo.name === writer;
 
   const compareComment = useCallback(

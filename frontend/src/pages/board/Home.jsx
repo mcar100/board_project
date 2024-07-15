@@ -1,18 +1,18 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import BoardTable from "../../components/Board/BoardTable";
 import Pagination from "../../components/Common/Pagination";
-import { UserContext } from "../../context/UserContext";
 import { getBoardList } from "../../services/BoardApi";
 import usePagination from "../../hooks/usePagination";
 import { useLinkNavigate } from "../../context/NavigationContext";
+import { useSelector } from "react-redux";
 
 function Home() {
   const { pageInfo, setPagination, setPageNo } = usePagination();
 
   const [tableList, setTableList] = useState();
-  const userContext = useContext(UserContext);
-  const isLogin = userContext.isLogin;
+  const user = useSelector((state)=>state.user);
+  const isLogin = user.isLogin;
   const navigate = useLinkNavigate();
 
   useEffect(() => {

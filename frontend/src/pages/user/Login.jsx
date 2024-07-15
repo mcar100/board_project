@@ -6,11 +6,14 @@ import { thrownHandler, ValidatorAlert } from "../../utils/ValidatorAlert";
 import { login } from "../../services/UserApi";
 import { useCheck } from "../../hooks/useInput";
 import { useLinkNavigate } from "../../context/NavigationContext";
+import { useDispatch } from "react-redux";
+import { fetchLogin } from "../../redux/modules/user";
 
 function Login() {
   const formRef = useRef(null);
   const { isChecked, checkOff, checkOn } = useCheck(false);
   const navigate = useLinkNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -28,6 +31,7 @@ function Login() {
       alert(result.message);
       if (result.success) {
         navigate(result.url);
+        dispatch(fetchLogin());
       }
     } catch (thrown) {
       thrownHandler(thrown);

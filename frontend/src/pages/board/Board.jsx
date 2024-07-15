@@ -18,8 +18,9 @@ function Board() {
   });
   const [fileDataList, setFileDataList] = useState([]);
 
-  if (pageType !== WRITE) {
+
     useEffect(() => {
+      if (pageType !== WRITE) {
       const load = async () => {
         const result = await getBoardData(boardId);
         if (result) {
@@ -36,8 +37,8 @@ function Board() {
         }
       };
       load();
-    }, []);
-  }
+    }   }, []);
+ 
 
   return (
     <>

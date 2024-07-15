@@ -4,16 +4,18 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { Button, Nav, Navbar, Dropdown, Image, Form } from "react-bootstrap";
 import { useLinkNavigate } from "../context/NavigationContext";
-import { UserContext } from "../context/UserContext";
-import { logout } from "../services/UserApi";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/modules/user";
+import { logout as logoutApi } from "../services/UserApi";
 import Report from "./Common/Report";
 
 function CustomNavbar() {
-  const user = useContext(UserContext);
   const navigate = useLinkNavigate();
+  const user = useSelector(state=>state.user);
+  const dispatch = useDispatch();
 
   const handleLogoutClick = useCallback(async (e) => {
     e.preventDefault();
@@ -22,10 +24,12 @@ function CustomNavbar() {
         return;
       }
 
-      const result = await logout();
+      const result = await logoutApi();
       if (result) {
         alert(result.message);
+        dispatch(logout())
         navigate(result.url);
+       
       }
     } catch (thrown) {
       console.log(thrown);
